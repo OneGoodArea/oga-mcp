@@ -1,0 +1,100 @@
+/**
+ * MCP tool: area_brief (AR-369), the marquee composite.
+ *
+ * Given an area + audience, returns a fully-formatted audience-shaped
+ * brief on that area, composed from real engine state. Internally calls
+ * GET /v1/area (full signal catalog) and POST /v1/score?explain=true
+ * (audience's preset, with server-composed summary + recommendations +
+ * data sources), then renders an audience-specific markdown layout.
+ *
+ * Brief-shape policy: no client-side text synthesis. The MCP only
+ * SELECTS which real fields render in which section per the audience
+ * config. Every word of prose comes from the engine.
+ */
+
+import type { OogaApiClient } from "../api-client.js";
+import { OogaApiError } from "../api-client.js";
+import { AUDIENCES, getAudienceConfig, type Audience } from "./area-brief-audiences.js";
+import { formatAreaBriefAsText } from "./area-brief-format.js";
+
+export const areaBriefToolName = "area_brief";
+
+export const areaBriefToolDef = {
+  name: areaBriefToolName,
+  description:
+    "Produce an audience-shaped brief on a UK area for one of four buyers: lender (residential mortgage origination), insurer (property risk underwriting), retailer (commercial site selection), investor (residential investment). " +
+    "Internally combines the full signals catalog with the audience's scoring preset (with explain mode) and renders an audience-specific markdown document: overall verdict, audience-relevant dimensions, audience-relevant signals with provenance, recommendations, and data sources. " +
+    "Every value is real engine output, with no client-side prose synthesis. Costs two API calls per invocation (one /v1/area, one /v1/score?explain=true).",
+  inputSchema: {
+    type: "object",
+    properties: {
+      area: {
+        type: "string",
+        description:
+          "UK postcode (e.g. 'SW1A 1AA') or place name (e.g. 'Manchester city centre'). Max 100 characters.",
+      },
+      audience: {
+        type: "string",
+        enum: AUDIENCES,
+        description: "Brief audience. One of: lender, insurer, retailer, investor.",
+      },
+    },
+    required: ["area", "audience"],
+    additionalProperties: false,
+  },
+} as const;
+
+export interface AreaBriefArgs {
+  area: string;
+  audience: Audience;
+}
+
+export function parseAreaBriefArgs(raw: unknown): AreaBriefArgs {
+  if (typeof raw !== "object" || raw === null) {
+    throw new Error("area_brief arguments must be an object");
+  }
+  const obj = raw as Record<string, unknown>;
+  const area = obj.area;
+  const audience = obj.audience;
+
+  if (typeof area !== "string" || area.trim().length === 0) {
+    throw new Error("area must be a non-empty string");
+  }
+  if (area.length > 100) {
+    throw new Error("area must be 100 characters or fewer");
+  }
+  if (typeof audience !== "string" || !(AUDIENCES as readonly string[]).includes(audience)) {
+    throw new Error(`audience must be one of: ${AUDIENCES.join(", ")}`);
+  }
+
+  return { area: area.trim(), audience: audience as Audience };
+}
+
+export async function executeAreaBrief(
+  client: OogaApiClient,
+  args: AreaBriefArgs,
+): Promise<{ content: Array<{ type: "text"; text: string }>; isError?: boolean }> {
+  const config = getAudienceConfig(args.audience);
+
+  try {
+    /* Two parallel calls, the brief needs both responses to render
+       and the network round-trip is the dominant cost. /v1/score is
+       called with explain=true (AR-363) so summary + recommendations
+       + data_sources come back server-composed. */
+    const [profile, score] = await Promise.all([
+      client.getAreaSignals(args.area),
+      client.scoreArea(args.area, config.preset),
+    ]);
+
+    return {
+      content: [{ type: "text", text: formatAreaBriefAsText(config, profile, score) }],
+    };
+  } catch (err) {
+    if (err instanceof OogaApiError) {
+      const msg = `OneGoodArea API error (HTTP ${err.status ?? "?"}): ${err.message}`;
+      return { content: [{ type: "text", text: msg }], isError: true };
+    }
+    const msg = err instanceof Error ? err.message : String(err);
+    return { content: [{ type: "text", text: `Tool error: ${msg}` }], isError: true };
+  }
+}

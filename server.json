@@ -1,0 +1,34 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.onegoodarea/oga-mcp",
+  "description": "Sourced facts, explained scores and change alerts for every GB neighbourhood, from one API.",
+  "websiteUrl": "https://www.onegoodarea.com/docs/mcp",
+  "version": "1.0.11",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@oga-mcp/server",
+      "version": "1.0.11",
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "OOGA_API_KEY",
+          "description": "Your OneGoodArea API key (starts with oga_), from https://www.onegoodarea.com/api-usage",
+          "isRequired": true,
+          "isSecret": true,
+          "format": "string"
+        },
+        {
+          "name": "OOGA_API_BASE",
+          "description": "API base URL",
+          "isRequired": false,
+          "default": "https://api.onegoodarea.com",
+          "format": "string"
+        }
+      ]
+    }
+  ]
+}
