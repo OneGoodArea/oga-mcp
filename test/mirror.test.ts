@@ -29,6 +29,12 @@ describe("public mirror", () => {
     expect(read(join(PKG, "README.md"))).toContain(MIRROR);
   });
 
+  it("tells Glama who maintains it", () => {
+    const glama = JSON.parse(read(join(PKG, "glama.json")));
+    expect(glama.$schema).toBe("https://glama.ai/mcp/schemas/server.json");
+    expect(glama.maintainers).toContain("ptengelmann");
+  });
+
   it.skipIf(!existsSync(WORKFLOW))("is fed by the sync workflow on every change to mcp/", () => {
     const wf = read(WORKFLOW);
     expect(wf).toContain("branches: [main]");
