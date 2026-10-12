@@ -29,9 +29,9 @@ export const METHODOLOGY: DimensionMethodology[] = [
   {
     dimension: "Deprivation",
     intents: ["moving", "business", "investing", "research"],
-    source: "IMD 2025 (England), WIMD 2019 (Wales), SIMD 2020 (Scotland)",
+    source: "IMD 2025 (England), WIMD 2025 (Wales), SIMD 2020 (Scotland)",
     summary:
-      "The official deprivation decile of the neighbourhood mapped to 0 to 100 (decile 1 most deprived, decile 10 least). The business preset reads the same decile as a spending-power proxy. Wales and Scotland carry medium confidence because their indices are older releases.",
+      "The official deprivation decile of the neighbourhood mapped to 0 to 100 (decile 1 most deprived, decile 10 least). The business preset reads the same decile as a spending-power proxy. England carries high confidence on IMD 2025, the current release; Wales (WIMD 2025) and Scotland (SIMD 2020) carry medium confidence because their indices are updated about every five years.",
     weights: { moving: 10, business: 15, investing: 10, research: 15 },
   },
   {
@@ -71,7 +71,7 @@ export const METHODOLOGY: DimensionMethodology[] = [
     intents: ["moving", "business", "investing", "research"],
     source: "Environment Agency (England), SEPA (Scotland), Natural Resources Wales; OpenStreetMap green space",
     summary:
-      "Starts high and loses points for each flood area or flood map near the neighbourhood and for any active flood warning, and gains a little for parks and green space. The reasoning names the agency and what it measures. Live warnings count only when they were checked for the response. Without flood data the score rests on green space at reduced confidence.",
+      "Counts the flood risk areas or flood maps near the neighbourhood's centre (the Environment Agency's own 3km rule in England; SEPA and Natural Resources Wales maps within 250m) and ranks that exposure among the nation's neighbourhoods, the least exposed scoring highest. Parks and green space add a little; an active flood warning, when warnings were checked for the response, takes points off. The reasoning names the agency and what it measures. Without flood data the score rests on green space at reduced confidence.",
     weights: { moving: 5, business: 15, investing: 15, research: 14 },
   },
 ];

@@ -20,18 +20,18 @@ export const getPortfolioChangesToolDef = {
   name: getPortfolioChangesToolName,
   description:
     "Check a Monitor portfolio for material signal changes between two time-series periods. " +
-    "Returns the portfolio's baseline + threshold settings, counts of areas checked and material changes, and a per-area table of every material signal move (with direction, from/to values, delta, percent change, and why it moved: the source data, or a OneGoodArea methodology release named by version). " +
+    "Returns the baseline and threshold the check used, counts of areas checked and material changes, and a per-area table of every material signal move (with direction, from/to values, delta, percent change, and why it moved: the source data, or a OneGoodArea methodology release named by version). " +
     "Use this after watch_portfolio has set up tracking, typically with default threshold_pct, or tighter when you want only large moves.",
   inputSchema: {
     type: "object",
     properties: {
       portfolio_id: {
         type: "string",
-        description: "ID returned by watch_portfolio (e.g. 'ptf_...').",
+        description: "ID returned by watch_portfolio (e.g. 'pf_...').",
       },
       threshold_pct: {
         type: "number",
-        description: "Minimum |percent change| to flag a move as material. Default is the portfolio's configured threshold. Non-negative.",
+        description: "Minimum |percent change| to flag a move as material. Default 5. Non-negative.",
         minimum: 0,
       },
       baseline: {
@@ -41,7 +41,7 @@ export const getPortfolioChangesToolDef = {
       },
       min_transactions: {
         type: "number",
-        description: "Sample-size gate for price moves (de-noise). Non-negative integer; default is the portfolio's configured value.",
+        description: "Sample-size gate for price moves (de-noise): both periods need at least this many sales. Non-negative integer; default 8.",
         minimum: 0,
       },
       cause: {

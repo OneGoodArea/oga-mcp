@@ -1,6 +1,6 @@
 {
   "name": "@oga-mcp/server",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "mcpName": "com.onegoodarea/oga-mcp",
   "description": "OneGoodArea MCP server. OneGoodArea is the intelligence layer for place: sourced, dated facts, explained scores, change monitoring and typed queries for every neighbourhood in Great Britain, served by one API. This server puts that API inside Claude Desktop, Cursor, Claude Code and any MCP client, every answer composed on the server from the engine.",
   "license": "MIT",
