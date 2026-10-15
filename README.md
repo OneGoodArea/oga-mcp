@@ -24,7 +24,23 @@ Two ways to connect, same twelve tools, same key.
 
 ### Hosted endpoint, nothing to install
 
-The API serves the tools itself at `https://api.onegoodarea.com/mcp` (Streamable HTTP). Any client that can send a header reaches it with no local process. Your API key goes in the `Authorization` header.
+The API serves the tools itself at `https://api.onegoodarea.com/mcp` (Streamable HTTP). Nothing runs on your machine.
+
+#### Sign in, no key to copy
+
+In Claude (web and apps): Settings, Connectors, Add custom connector. Name it OneGoodArea, paste `https://api.onegoodarea.com/mcp`, keep the detected defaults and connect. Sign in to OneGoodArea, click Allow access, and the tools are in your next chat.
+
+In Claude Code:
+
+```sh
+claude mcp add --transport http onegoodarea https://api.onegoodarea.com/mcp
+```
+
+then type `/mcp`, pick `onegoodarea` and choose Authenticate. Your browser opens the same sign-in.
+
+Approving creates an API key named after the app in your account (for example "Claude connector"). It carries your plan and allowance like any other key, and revoking it from your dashboard disconnects the app. Any client that supports MCP sign-in (OAuth) works the same way from the URL alone.
+
+#### Or send your API key in a header
 
 Claude Code:
 
@@ -45,7 +61,7 @@ Cursor, in `.cursor/mcp.json`:
 }
 ```
 
-Any other client: point its remote MCP server setting at the URL above and add the header. Each tool call is metered exactly like a direct API call under your key. Sign-in without a key, for claude.ai and ChatGPT, is the next release.
+Any other client: point its remote MCP server setting at the URL above and add the header. Each tool call is metered exactly like a direct API call under your key. ChatGPT follows once the server is listed in the OpenAI apps directory.
 
 ### Local package
 
@@ -102,7 +118,7 @@ claude mcp add onegoodarea -e OOGA_API_KEY=oga_xxx -- npx -y @oga-mcp/server
 1. Sign up at https://www.onegoodarea.com/sign-up.
 2. Go to https://www.onegoodarea.com/dashboard.
 3. Create an API key; it starts with `oga_`.
-4. Paste it after `Bearer` in the hosted header, or into the `OOGA_API_KEY` env var for the local package.
+4. Paste it after `Bearer` in the hosted header, or into the `OOGA_API_KEY` env var for the local package. If your client signs in instead, skip this: the key is created for you when you allow access.
 
 ---
 
