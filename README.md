@@ -113,6 +113,10 @@ claude mcp add onegoodarea -e OOGA_API_KEY=oga_xxx -- npx -y @oga-mcp/server
 
 ---
 
+## Claude plugin
+
+The `plugin/` folder is a Claude plugin: the hosted connector plus four skills that teach Claude how to use the tools well (area research for lenders, site comparison for retail, reading confidence and dates, portfolio watch). Once it is listed in the Claude directory, installing the plugin connects you with a sign-in. To try it before then, run `claude --plugin-dir ./plugin` from a checkout of this repository. Details in `plugin/README.md`.
+
 ## Get an API key
 
 1. Sign up at https://www.onegoodarea.com/sign-up.

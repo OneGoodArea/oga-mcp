@@ -1,0 +1,20 @@
+{
+  "name": "onegoodarea",
+  "version": "1.0.0",
+  "description": "Sourced, dated facts, explained scores, peers and change monitoring for every neighbourhood in England, Wales and Scotland, served by the OneGoodArea hosted MCP server, with skills that teach Claude to read confidence, observation periods and methodology versions before it answers.",
+  "author": {
+    "name": "OneGoodArea",
+    "url": "https://www.onegoodarea.com"
+  },
+  "homepage": "https://www.onegoodarea.com/docs/mcp",
+  "repository": "https://github.com/OneGoodArea/oga-mcp",
+  "license": "MIT",
+  "keywords": [
+    "uk",
+    "property",
+    "location-intelligence",
+    "postcode",
+    "neighbourhood",
+    "mcp"
+  ]
+}
