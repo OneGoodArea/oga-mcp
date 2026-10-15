@@ -11,6 +11,7 @@ import { getPortfolioChangesToolDef } from "../src/tools/get-portfolio-changes.j
 import { areaBriefToolDef } from "../src/tools/area-brief.js";
 import { methodologyForToolDef } from "../src/tools/methodology-for.js";
 import { engineVersionToolDef } from "../src/tools/engine-version.js";
+import { TOOL_DEFINITIONS } from "../src/tools/index.js";
 
 /* AR-1152: the Claude directory requires a title and a read-only or
    destructive hint on every tool, and reads descriptions as the model does.
@@ -61,6 +62,13 @@ describe("tool definitions", () => {
     if (!tool.annotations.readOnlyHint) {
       expect(typeof tool.annotations.destructiveHint).toBe("boolean");
       expect(typeof tool.annotations.idempotentHint).toBe("boolean");
+    }
+  });
+
+  it("carry the title inside annotations as well, where the directory reads it (AR-1191)", () => {
+    expect(TOOL_DEFINITIONS).toHaveLength(TOOLS.length);
+    for (const tool of TOOL_DEFINITIONS) {
+      expect(tool.annotations.title, tool.name).toBe(tool.title);
     }
   });
 

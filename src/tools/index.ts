@@ -41,20 +41,30 @@ export {
   engineVersionToolDef,
 };
 
+type WithTitleAnnotation<T extends { title: string; annotations: object }> = Omit<T, "annotations"> & {
+  readonly annotations: T["annotations"] & { readonly title: T["title"] };
+};
+
+/* The MCP spec reads a tool's readable name from the top-level title, the
+   Claude directory from annotations.title; every tool carries both. */
+function withTitleAnnotation<T extends { title: string; annotations: object }>(tool: T): WithTitleAnnotation<T> {
+  return { ...tool, annotations: { title: tool.title, ...tool.annotations } };
+}
+
 /** Every tool, in the order clients list them. */
 export const TOOL_DEFINITIONS = [
-  resolvePlaceToolDef,
-  scorePostcodeToolDef,
-  comparePostcodesToolDef,
-  getAreaSignalsToolDef,
-  getSignalsByCategoryToolDef,
-  findAreasToolDef,
-  findPeersToolDef,
-  watchPortfolioToolDef,
-  getPortfolioChangesToolDef,
-  areaBriefToolDef,
-  methodologyForToolDef,
-  engineVersionToolDef,
+  withTitleAnnotation(resolvePlaceToolDef),
+  withTitleAnnotation(scorePostcodeToolDef),
+  withTitleAnnotation(comparePostcodesToolDef),
+  withTitleAnnotation(getAreaSignalsToolDef),
+  withTitleAnnotation(getSignalsByCategoryToolDef),
+  withTitleAnnotation(findAreasToolDef),
+  withTitleAnnotation(findPeersToolDef),
+  withTitleAnnotation(watchPortfolioToolDef),
+  withTitleAnnotation(getPortfolioChangesToolDef),
+  withTitleAnnotation(areaBriefToolDef),
+  withTitleAnnotation(methodologyForToolDef),
+  withTitleAnnotation(engineVersionToolDef),
 ] as const;
 
 export type ToolName = (typeof TOOL_DEFINITIONS)[number]["name"];
