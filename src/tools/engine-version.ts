@@ -16,15 +16,16 @@ const RECENT_RELEASES = 5;
 
 export const engineVersionToolDef = {
   name: engineVersionToolName,
+  title: "Engine version and releases",
   description:
-    "Return the current OneGoodArea engine version, its release date, and the most recent methodology releases. " +
-    "Use this when a customer asks 'what version are we on' or for procurement / model-risk documentation. " +
-    "The engine version is also stamped on every score_postcode response for audit trails.",
+    "Returns the engine version the API stamps on responses now, its release date and the most recent methodology releases, read live. " +
+    "Fits 'what version are we on' and model-risk documentation; the same version is stamped on every score_postcode and get_area_signals response.",
   inputSchema: {
     type: "object",
     properties: {},
     additionalProperties: false,
   },
+  annotations: { readOnlyHint: true },
 } as const;
 
 export async function executeEngineVersion(client: OogaApiClient): Promise<{

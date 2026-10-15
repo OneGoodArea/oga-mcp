@@ -18,30 +18,30 @@ export const getPortfolioChangesToolName = "get_portfolio_changes";
 
 export const getPortfolioChangesToolDef = {
   name: getPortfolioChangesToolName,
+  title: "Material changes in a portfolio",
   description:
-    "Check a Monitor portfolio for material signal changes between two time-series periods. " +
-    "Returns the baseline and threshold the check used, counts of areas checked and material changes, and a per-area table of every material signal move (with direction, from/to values, delta, percent change, and why it moved: the source data, or a OneGoodArea methodology release named by version). " +
-    "Use this after watch_portfolio has set up tracking, typically with default threshold_pct, or tighter when you want only large moves.",
+    "Reports material signal changes across a portfolio between two periods: the baseline and threshold used, counts of places checked and changes found, and for each place every signal that moved with direction, from and to values, delta, percent change and the cause (the source data moved, or a OneGoodArea methodology release named by version). " +
+    "Needs a portfolio id from watch_portfolio. Reading does not fire the portfolio's webhooks.",
   inputSchema: {
     type: "object",
     properties: {
       portfolio_id: {
         type: "string",
-        description: "ID returned by watch_portfolio (e.g. 'pf_...').",
+        description: "The portfolio id returned by watch_portfolio (e.g. 'pf_...').",
       },
       threshold_pct: {
         type: "number",
-        description: "Minimum |percent change| to flag a move as material. Default 5. Non-negative.",
+        description: "Smallest absolute percent change that counts as material. Default 5. Zero or more.",
         minimum: 0,
       },
       baseline: {
         type: "string",
         enum: ["previous", "first"],
-        description: "Compare the latest period vs the previous period (default), or vs the first period in range.",
+        description: "Compare the latest period with the previous period (default) or with the first period in range.",
       },
       min_transactions: {
         type: "number",
-        description: "Sample-size gate for price moves (de-noise): both periods need at least this many sales. Non-negative integer; default 8.",
+        description: "Sample-size gate for price moves: both periods need at least this many sales. Whole number, zero or more; default 8.",
         minimum: 0,
       },
       cause: {
@@ -53,6 +53,7 @@ export const getPortfolioChangesToolDef = {
     required: ["portfolio_id"],
     additionalProperties: false,
   },
+  annotations: { readOnlyHint: true },
 } as const;
 
 export interface GetPortfolioChangesArgs {

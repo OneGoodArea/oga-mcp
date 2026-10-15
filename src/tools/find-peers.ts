@@ -16,21 +16,22 @@ export const findPeersToolName = "find_peers";
 
 export const findPeersToolDef = {
   name: findPeersToolName,
+  title: "Find similar neighbourhoods",
   description:
-    "Find LSOAs similar to a UK area by k-nearest-neighbour over normalized signal values. " +
-    "Returns the target LSOA, the signal dimensions used in the comparison, and a ranked list of peers with distance (0 = identical, 1 = maximally distant in the normalized space) and n_dims_used. " +
-    "Use this when the LLM needs 'areas like this one' for a specific postcode or place name.",
+    "Finds the neighbourhoods most similar to one place in England, Wales or Scotland by nearest-neighbour distance over normalised signal values. " +
+    "Returns the target neighbourhood code, the signals used, and a ranked list of peers with distance (0 identical, 1 maximally distant) and the number of signals each comparison used. " +
+    "Fits 'areas like this one'; for a ranking filtered by named signals, find_areas.",
   inputSchema: {
     type: "object",
     properties: {
       area: {
         type: "string",
         description:
-          "UK postcode (e.g. 'SW1A 1AA') or place name (e.g. 'Manchester city centre'). Max 100 characters.",
+          "A postcode (e.g. 'SW1A 1AA'), a place name (e.g. 'Manchester city centre') or a neighbourhood code (e.g. 'E01003920') in England, Wales or Scotland. Up to 100 characters.",
       },
       k: {
         type: "number",
-        description: "Number of peers to return. Default 20, max 200.",
+        description: "How many peers to return. Default 20, at most 200.",
         minimum: 1,
         maximum: 200,
       },
@@ -38,6 +39,7 @@ export const findPeersToolDef = {
     required: ["area"],
     additionalProperties: false,
   },
+  annotations: { readOnlyHint: true },
 } as const;
 
 export interface FindPeersArgs {

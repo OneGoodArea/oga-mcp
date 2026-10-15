@@ -34,6 +34,7 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { DEFAULT_BASE, OogaApiClient } from "./api-client.js";
+import { trainingCaptureLine } from "./startup.js";
 import {
   scorePostcodeToolDef,
   scorePostcodeToolName,
@@ -99,6 +100,12 @@ import {
   parseAreaBriefArgs,
   executeAreaBrief,
 } from "./tools/area-brief.js";
+import {
+  resolvePlaceToolDef,
+  resolvePlaceToolName,
+  parseResolvePlaceArgs,
+  executeResolvePlace,
+} from "./tools/resolve-place.js";
 
 const SERVER_VERSION: string = createRequire(import.meta.url)("../package.json").version;
 
@@ -143,18 +150,7 @@ async function checkMcpAccess(client: OogaApiClient): Promise<void> {
     `[oga-mcp] Entitlement OK · plan: ${me.plan_name} · engine: ${me.engine_version}\n`,
   );
 
-  /* AR-385: surface the per-key training-data capture state on every
-     boot. Customers can toggle in /api-usage; this log makes the current
-     state visible every time their MCP client (Claude Code / Cursor /
-     Claude Desktop) starts the server. Defaults to false (capturing)
-     when the apps/api response predates AR-385. */
-  const trainingOptout = me.key?.training_optout ?? false;
-  const captureState = trainingOptout ? "OFF (you opted out)" : "ON";
-  process.stderr.write(
-    `[oga-mcp] Training-data capture: ${captureState} for this key. ` +
-      `Toggle at https://www.onegoodarea.com/api-usage · ` +
-      `Policy: https://www.onegoodarea.com/legal/data-policy\n`,
-  );
+  process.stderr.write(trainingCaptureLine(me));
 }
 
 async function main(): Promise<void> {
@@ -177,12 +173,13 @@ async function main(): Promise<void> {
   );
   server.oninitialized = () => client.setHostClient(server.getClientVersion());
 
-  // 11 tools: score_postcode, compare_postcodes, get_area_signals,
-  // get_signals_by_category, find_areas, find_peers, watch_portfolio,
-  // get_portfolio_changes, area_brief, engine_version (network);
-  // methodology_for (static lookup).
+  // 12 tools: resolve_place, score_postcode, compare_postcodes,
+  // get_area_signals, get_signals_by_category, find_areas, find_peers,
+  // watch_portfolio, get_portfolio_changes, area_brief, engine_version
+  // (network); methodology_for (static lookup).
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
     tools: [
+      resolvePlaceToolDef,
       scorePostcodeToolDef,
       comparePostcodesToolDef,
       getAreaSignalsToolDef,
@@ -201,6 +198,10 @@ async function main(): Promise<void> {
   server.setRequestHandler(CallToolRequestSchema, async (req) => {
     const { name, arguments: args } = req.params;
 
+    if (name === resolvePlaceToolName) {
+      const parsed = parseResolvePlaceArgs(args);
+      return executeResolvePlace(client, parsed);
+    }
     if (name === scorePostcodeToolName) {
       const parsed = parseScorePostcodeArgs(args);
       return executeScorePostcode(client, parsed);

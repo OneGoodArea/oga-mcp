@@ -12,10 +12,10 @@ export const methodologyForToolName = "methodology_for";
 
 export const methodologyForToolDef = {
   name: methodologyForToolName,
+  title: "Methodology for a scoring dimension",
   description:
-    "Get the methodology explanation for a specific scoring dimension (e.g. 'Crime', 'Transport', 'Environment'). " +
-    "Returns the data source, summary of how the score is computed, and the per-intent weight. " +
-    "Useful when a customer asks 'why did Safety score 80?' or for procurement teams reviewing methodology before integration. " +
+    "Explains how one scoring dimension is computed: its data source, the scoring summary and its weight under each preset. " +
+    "Answers 'why did Crime score 80' and supports procurement or model-risk review. Static lookup, no API call. " +
     `Recognised dimensions: ${METHODOLOGY.map((d) => d.dimension).join(", ")}.`,
   inputSchema: {
     type: "object",
@@ -23,12 +23,13 @@ export const methodologyForToolDef = {
       dimension: {
         type: "string",
         description:
-          "Dimension name. Case-insensitive, partial match supported (e.g. 'environ' matches 'Environment').",
+          "The dimension name. Case does not matter and a partial match works (e.g. 'environ' matches 'Environment').",
       },
     },
     required: ["dimension"],
     additionalProperties: false,
   },
+  annotations: { readOnlyHint: true },
 } as const;
 
 export interface MethodologyForArgs {

@@ -19,23 +19,25 @@ export const getAreaSignalsToolName = "get_area_signals";
 
 export const getAreaSignalsToolDef = {
   name: getAreaSignalsToolName,
+  title: "All signals for a place",
   description:
-    "Get the full OneGoodArea Signals catalog for a UK area (every signal across all seven categories: crime, deprivation, property, schools, amenities, transport, environment). " +
-    "Returns each signal's raw value with unit, percentile (when store-backed), confidence with engine-grounded reasoning, source attribution, and observation period. " +
-    "Deprivation includes each nation's domain deciles (income, employment, health, education and more) with the published rank and score. Use this to inspect underlying data rather than a composite score; the primitive that powers every other product.",
+    "Returns every signal OneGoodArea holds for one place in England, Wales or Scotland, across crime, deprivation, property, schools, amenities, transport and environment: value with unit, percentile where the store has one, confidence with the engine's reason, source and observation period. " +
+    "Deprivation includes each nation's domain deciles (income, employment, health, education and more) with the published rank and score. " +
+    "This is the data behind every score; for one category only, get_signals_by_category.",
   inputSchema: {
     type: "object",
     properties: {
       area: {
         type: "string",
         description:
-          "UK postcode (e.g. 'SW1A 1AA') or place name (e.g. 'Manchester city centre', 'Shoreditch'). Max 100 characters.",
+          "A postcode (e.g. 'SW1A 1AA'), a place name (e.g. 'Manchester city centre') or a neighbourhood code (e.g. 'E01003920') in England, Wales or Scotland. Up to 100 characters.",
       },
       sort: SORT_PROPERTY,
     },
     required: ["area"],
     additionalProperties: false,
   },
+  annotations: { readOnlyHint: true },
 } as const;
 
 export interface GetAreaSignalsArgs {

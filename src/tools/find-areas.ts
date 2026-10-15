@@ -17,21 +17,24 @@ export const findAreasToolName = "find_areas";
 
 export const findAreasToolDef = {
   name: findAreasToolName,
+  title: "Ask a question about places",
   description:
-    "Ask a natural-language question over UK area intelligence. The planner translates it into one of seven typed plan operations: rank_areas (filter + sort LSOAs by signals), get_area, score_area, compare_areas (2-5 side by side), find_peers (k-NN over normalized signals), find_insights (peer-relative anomalies), or find_forecast (linear-regression projection). " +
-    "Returns the emitted plan (for transparency) plus the op-specific results. Deprivation questions need a nation (England, Wales or Scotland) or a district, because deciles are relative within a nation. Every answer is reproducible because the plan is the contract: replay the same plan, get the same result.",
+    "Answers a natural-language question about places in England, Wales or Scotland by translating it into one typed query plan and running it: rank neighbourhoods by signals with filters, read one area, score an area, compare 2 to 5 areas, find peers, find peer-relative anomalies, or project a signal forward. " +
+    "Returns the plan it ran with the results, so the answer is reproducible. Deprivation questions need a nation or a district, because deciles are relative within a nation. " +
+    "Each call uses one natural-language question from the key's monthly allowance.",
   inputSchema: {
     type: "object",
     properties: {
       question: {
         type: "string",
         description:
-          "Free-form question about UK areas. Examples: 'areas under £250k median price and rising YoY in England', 'compare M1 1AE, SW4 0LG, EH1 1BB for site selection', 'LSOAs like E01034129 with similar crime + amenity profile', 'forecast median price in M1 1AE over the next 12 months'. Max 500 characters.",
+          "A question about places in England, Wales or Scotland. Examples: 'areas under £250k median price and rising YoY in England', 'compare M1 1AE, SW4 0LG, EH1 1BB for site selection', 'neighbourhoods like E01034129 with a similar crime and amenity profile', 'forecast median price in M1 1AE over the next 12 months'. Max 500 characters.",
       },
     },
     required: ["question"],
     additionalProperties: false,
   },
+  annotations: { readOnlyHint: true },
 } as const;
 
 export interface FindAreasArgs {

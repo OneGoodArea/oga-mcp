@@ -2,18 +2,18 @@
 
 OneGoodArea is the intelligence layer for place: sourced, dated facts, explained scores, change monitoring and typed queries for every neighbourhood in Great Britain, served by one API with the methodology version on every response.
 
-This package is one way to deliver it. It puts the same API inside Claude Desktop, Cursor, Claude Code, Windsurf or any MCP-compatible client: score a place for one of four presets, read the signals catalog, ask in natural language, find peers, watch portfolios for material change and generate audience-shaped briefs. Every answer is composed on the server from the engine. No client-side prose synthesis: every line of output cites real engine state.
+This package is one way to deliver it. It puts the same API inside Claude Desktop, Cursor, Claude Code, Windsurf or any MCP-compatible client: resolve any postcode, name or code to a permanent place id, score a place for one of four presets, read the signals catalog, ask in natural language, find peers, watch portfolios for material change and generate audience-shaped briefs. Every answer is composed on the server from the engine. No client-side prose synthesis: every line of output cites real engine state.
 
 ---
 
-## Data policy (read this)
+## Data policy
 
-By default, queries made through this MCP server are used to improve OneGoodArea's own AI models (planner translations and brief composition). You can opt out per API key at any time.
+Training-data capture is off by default. Nothing you ask through this server is used to improve OneGoodArea's own models unless you switch capture on for a key.
 
-- **What's captured:** natural-language questions to `find_areas`, and full `score_postcode` requests + responses when explain is on. Operational logs (which tool was called, when, by whom) are kept either way.
-- **How to opt out:** sign in at https://www.onegoodarea.com/api-usage and click the "Training" toggle next to any of your keys. Takes effect on the next request from any MCP client using that key.
-- **Where state is shown:** on every server start, this MCP logs `[oga-mcp] Training-data capture: ON | OFF` so you can see the current state for the key you're using.
-- **Retention:** training data is purged automatically after 365 days.
+- **What capture would store, if you opt in:** natural-language questions to `find_areas`, and full `score_postcode` requests and responses when explain is on. Operational logs (which tool was called, when, by whom) are kept either way.
+- **How to opt in or out:** sign in at https://www.onegoodarea.com/api-usage and use the "Training" switch next to any of your keys. It takes effect on the next request from any client using that key.
+- **Where the state is shown:** on every start this server logs `[oga-mcp] Training-data capture: OFF | ON` for the key in use.
+- **Retention:** captured data is purged automatically after 365 days.
 - **Full policy:** https://www.onegoodarea.com/legal/data-policy
 
 ---
@@ -81,61 +81,67 @@ claude mcp add onegoodarea -e OOGA_API_KEY=oga_xxx -- npx -y @oga-mcp/server
 
 ## Tools
 
-Eleven tools across six surfaces. Every response is composed server-side from the deterministic engine, with no client-side prose synthesis.
+Twelve tools across seven surfaces. Every response is composed server-side from the deterministic engine, with no client-side prose synthesis.
+
+### Places
+
+#### `resolve_place(query)`: Resolve a place
+
+One input, the permanent place it names. Accepts a postcode, a place name, an official neighbourhood code or an `oga_pl_` place id and returns the id, type, name, country and nation, how it resolved, and for a postcode whether it is live or retired. A retired postcode still resolves to the neighbourhood it was in, with the month it was retired. Several matches come back as candidates with their ids; nothing comes back with the reason.
 
 ### Scores
 
-#### `score_postcode(area, preset)`
+#### `score_postcode(area, preset)`: Score a place for a decision
 
 Score a UK postcode or place name for a preset (`moving`, `business`, `investing`, `research`). Returns the 0-100 score, seven weighted dimensions with engine-grounded reasoning + confidence, a one-paragraph summary, recommendations, and data sources.
 
-#### `compare_postcodes(areas, preset)`
+#### `compare_postcodes(areas, preset)`: Compare places side by side
 
 Score 2-8 areas side-by-side for the same preset. Returns a sorted comparison table with per-area summaries. Partial failures surface inline.
 
 ### Signals
 
-#### `get_area_signals(area)`
+#### `get_area_signals(area)`: All signals for a place
 
 Full signals catalog across all seven categories (crime, deprivation, property, schools, amenities, transport, environment). Each signal carries value + unit, percentile when store-backed, confidence with engine-grounded reason, source attribution, and observation period.
 
-#### `get_signals_by_category(area, category)`
+#### `get_signals_by_category(area, category)`: Signals in one category
 
 Same shape as `get_area_signals`, narrowed to one category. Use when the LLM needs to focus on a single data domain.
 
 ### Intelligence
 
-#### `find_areas(question)`
+#### `find_areas(question)`: Ask a question about places
 
 Ask in natural language. The planner translates the question into a typed plan (one of seven ops: `rank_areas`, `get_area`, `score_area`, `compare_areas`, `find_peers`, `find_insights`, `find_forecast`); the database executes it. The response returns the emitted plan + results, so every answer carries the query that produced it and can be run again.
 
-#### `find_peers(area, k?)`
+#### `find_peers(area, k?)`: Find similar neighbourhoods
 
 k-nearest-neighbour peers for a UK area by normalised signal values. Returns the target's geo_code, the signal dimensions used in the comparison, and a ranked peers list with distance (0 = identical, 1 = maximally distant) and `n_dims_used`.
 
 ### Monitor
 
-#### `watch_portfolio(name, areas)`
+#### `watch_portfolio(name, areas)`: Watch a portfolio of places
 
 One-shot setup: creates a tracked portfolio and adds areas. Returns the new `portfolio_id` and the area list. If the add step fails after the create, the response surfaces the partial state so the LLM can act.
 
-#### `get_portfolio_changes(portfolio_id, threshold_pct?, baseline?, min_transactions?)`
+#### `get_portfolio_changes(portfolio_id, threshold_pct?, baseline?, min_transactions?)`: Material changes in a portfolio
 
 Check a portfolio for material signal changes between two time-series periods. Returns scope, counts, and a per-area table of material moves with direction, from/to values, delta, and percent change. Probe calls don't fire customer webhooks.
 
 ### Brief
 
-#### `area_brief(area, audience)`, marquee
+#### `area_brief(area, audience)`: Brief on a place for an audience
 
 One audience-shaped advisory document per area. Audience ∈ `{lender, insurer, retailer, investor}`. Composes the full signals catalog with the audience's scoring preset (with explain mode), then renders an audience-specific brief: overall verdict, audience-relevant dimensions, audience-relevant signals with provenance, recommendations, and data sources.
 
 ### Reference
 
-#### `methodology_for(dimension)`
+#### `methodology_for(dimension)`: Methodology for a scoring dimension
 
 Methodology for any scoring dimension: data source, scoring function summary, per-preset weights. Static lookup: no network, no quota cost.
 
-#### `engine_version()`
+#### `engine_version()`: Engine version and releases
 
 Current engine version and the most recent methodology releases, read live from the API. The live engine version is also stamped on every `score_postcode` and `get_area_signals` response.
 

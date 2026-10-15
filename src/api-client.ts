@@ -249,6 +249,39 @@ export interface OogaScoreResponse {
   data_sources?: string[];
 }
 
+/** Place registry (ADR 0044): a place as every response refers to it, and
+    the outcome of GET /v1/places/resolve. Mirrors @onegoodarea/contracts
+    PlaceRef and PlaceResolution. */
+export interface OogaPlaceRef {
+  place_id: string;
+  place_type: "country" | "nation" | "region" | "district" | "group" | "neighbourhood";
+  name: string | null;
+  country: string;
+  nation: string | null;
+}
+
+export interface OogaPlaceCandidate {
+  label: string;
+  postcode: string | null;
+  place: OogaPlaceRef | null;
+}
+
+export type OogaPlaceResolution =
+  | {
+      status: "resolved";
+      input: string;
+      place: OogaPlaceRef;
+      resolved_via: { kind: "place_id" | "postcode" | "code" | "name"; scheme: string | null; value: string };
+      postcode: { postcode: string; status: "live" | "terminated"; terminated_on: string | null } | null;
+    }
+  | { status: "ambiguous"; input: string; candidates: OogaPlaceCandidate[] }
+  | { status: "not_found"; input: string; reason: string; message: string };
+
+export interface OogaPlaceResolveResponse {
+  result: OogaPlaceResolution;
+  meta: { engine_version: string; generated_at: string };
+}
+
 export interface OogaApiClientOptions {
   apiKey: string;
   baseUrl?: string;
@@ -269,9 +302,8 @@ export interface OogaMeResponse {
   limit_this_month: number | null;
   engine_version: string;
   /* AR-385: per-key training-data opt-out state, surfaced so the MCP
-     server can log capture state on every boot. Optional: legacy apps/api
-     builds before AR-385 don't include it, so the field is undefined for
-     those, caller treats undefined as false (default = participate). */
+     server can log capture state on every boot. Optional: an API build
+     without it is read as opted out, the default since AR-1152. */
   key?: {
     allowed_ip_cidrs?: string[];
     training_optout?: boolean;
@@ -357,6 +389,13 @@ export class OogaApiClient {
   /** GET /v1/meta: the live engine version and methodology history. */
   async meta(): Promise<OogaMetaResponse> {
     return this.getJson<OogaMetaResponse>("/v1/meta");
+  }
+
+  /** GET /v1/places/resolve?q=: one input to the place it names. The API
+      answers not_found with HTTP 404 and the same body shape, so that status
+      is a result here, not an error. */
+  async resolvePlace(query: string): Promise<OogaPlaceResolveResponse> {
+    return this.getJson<OogaPlaceResolveResponse>(`/v1/places/resolve?q=${encodeURIComponent(query)}`, { acceptStatuses: [404] });
   }
 
   /**
@@ -527,8 +566,9 @@ export class OogaApiClient {
     }
   }
 
-  /** Shared authenticated GET. */
-  private async getJson<T>(path: string): Promise<T> {
+  /** Shared authenticated GET. A status in acceptStatuses is a result when the
+      body is not an error object. */
+  private async getJson<T>(path: string, opts: { acceptStatuses?: readonly number[] } = {}): Promise<T> {
     const url = `${this.baseUrl}${path}`;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
@@ -547,11 +587,10 @@ export class OogaApiClient {
       let body: unknown;
       try { body = JSON.parse(text); } catch { body = text; }
 
-      if (!res.ok) {
-        const errMsg =
-          typeof body === "object" && body !== null && "error" in body
-            ? String((body as { error: unknown }).error)
-            : `HTTP ${res.status}`;
+      const errorBody = typeof body === "object" && body !== null && "error" in body;
+      const accepted = res.ok || (!errorBody && (opts.acceptStatuses?.includes(res.status) ?? false));
+      if (!accepted) {
+        const errMsg = errorBody ? String((body as { error: unknown }).error) : `HTTP ${res.status}`;
         throw new OogaApiError(errMsg, res.status, body);
       }
 

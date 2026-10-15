@@ -21,27 +21,29 @@ export const areaBriefToolName = "area_brief";
 
 export const areaBriefToolDef = {
   name: areaBriefToolName,
+  title: "Brief on a place for an audience",
   description:
-    "Produce an audience-shaped brief on a UK area for one of four buyers: lender (residential mortgage origination), insurer (property risk underwriting), retailer (commercial site selection), investor (residential investment). " +
-    "Internally combines the full signals catalog with the audience's scoring preset (with explain mode) and renders an audience-specific markdown document: overall verdict, audience-relevant dimensions, audience-relevant signals with provenance, recommendations, and data sources. " +
-    "Every value is real engine output, with no client-side prose synthesis. Costs two API calls per invocation (one /v1/area, one /v1/score?explain=true).",
+    "Writes a brief on one place in England, Wales or Scotland for one audience: lender (residential mortgage origination), insurer (property risk underwriting), retailer (site selection) or investor (residential investment). " +
+    "Combines the full signals catalogue with the audience's scoring preset and returns a markdown document: verdict, the dimensions and signals that matter to that audience with provenance, recommendations and data sources, all composed from engine output. " +
+    "Counts as two API calls.",
   inputSchema: {
     type: "object",
     properties: {
       area: {
         type: "string",
         description:
-          "UK postcode (e.g. 'SW1A 1AA') or place name (e.g. 'Manchester city centre'). Max 100 characters.",
+          "A postcode (e.g. 'SW1A 1AA'), a place name (e.g. 'Manchester city centre') or a neighbourhood code (e.g. 'E01003920') in England, Wales or Scotland. Up to 100 characters.",
       },
       audience: {
         type: "string",
         enum: AUDIENCES,
-        description: "Brief audience. One of: lender, insurer, retailer, investor.",
+        description: "Who the brief is for: lender, insurer, retailer or investor.",
       },
     },
     required: ["area", "audience"],
     additionalProperties: false,
   },
+  annotations: { readOnlyHint: true },
 } as const;
 
 export interface AreaBriefArgs {

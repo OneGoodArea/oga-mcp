@@ -18,28 +18,30 @@ export const getSignalsByCategoryToolName = "get_signals_by_category";
 
 export const getSignalsByCategoryToolDef = {
   name: getSignalsByCategoryToolName,
+  title: "Signals in one category",
   description:
-    "Get OneGoodArea Signals for a single category at a UK area. Categories: crime (police.uk), deprivation (IMD/WIMD/SIMD), property (HM Land Registry), schools (Ofsted/Estyn/Education Scotland), amenities (OpenStreetMap), transport (OpenStreetMap), environment (Environment Agency). " +
-    "Same per-signal shape as get_area_signals (value, unit, percentile when store-backed, confidence with engine-grounded reason, source, observation period), narrowed to one category for focused analysis. Deprivation includes each nation's domain deciles with the published rank and score.",
+    "Returns the signals of one category for a place in England, Wales or Scotland, in the same shape as get_area_signals: value with unit, percentile where the store has one, confidence with reason, source and observation period. " +
+    "Categories: crime (police.uk), deprivation (IMD, WIMD and SIMD with each nation's domain deciles, rank and score), property (HM Land Registry), schools (Ofsted, Estyn, Education Scotland), amenities and transport (OpenStreetMap), environment (flood risk from the Environment Agency, Natural Resources Wales and SEPA).",
   inputSchema: {
     type: "object",
     properties: {
       area: {
         type: "string",
         description:
-          "UK postcode (e.g. 'SW1A 1AA') or place name (e.g. 'Manchester city centre'). Max 100 characters.",
+          "A postcode (e.g. 'SW1A 1AA'), a place name (e.g. 'Manchester city centre') or a neighbourhood code (e.g. 'E01003920') in England, Wales or Scotland. Up to 100 characters.",
       },
       category: {
         type: "string",
         enum: SIGNAL_CATEGORIES,
         description:
-          "Signal category to return. One of: crime, deprivation, property, schools, amenities, transport, environment.",
+          "The category to return: crime, deprivation, property, schools, amenities, transport or environment.",
       },
       sort: SORT_PROPERTY,
     },
     required: ["area", "category"],
     additionalProperties: false,
   },
+  annotations: { readOnlyHint: true },
 } as const;
 
 export interface GetSignalsByCategoryArgs {

@@ -18,10 +18,10 @@ export const comparePostcodesToolName = "compare_postcodes";
 
 export const comparePostcodesToolDef = {
   name: comparePostcodesToolName,
+  title: "Compare places side by side",
   description:
-    "Compare multiple UK postcodes (max 8) side-by-side for the same decision preset. " +
-    "Returns a sorted table showing each area's overall score, area type, top dimension, and the server-composed per-area summary. " +
-    "Each request hits POST /v1/score?explain=true independently; partial failures are inline, not fatal.",
+    "Scores 2 to 8 places in England, Wales or Scotland for the same decision preset and returns one table sorted by score: overall score, area type, strongest dimension and a one-line summary per place. " +
+    "Each place is scored independently, so a place that fails is reported in its row while the others still return.",
   inputSchema: {
     type: "object",
     properties: {
@@ -30,18 +30,19 @@ export const comparePostcodesToolDef = {
         items: { type: "string" },
         minItems: 2,
         maxItems: MAX_AREAS,
-        description: `Array of UK postcodes or place names to compare. Between 2 and ${MAX_AREAS} entries.`,
+        description: `Postcodes, place names or neighbourhood codes in England, Wales or Scotland to compare. Between 2 and ${MAX_AREAS} entries.`,
       },
       preset: {
         type: "string",
         enum: ["moving", "business", "investing", "research"],
         description:
-          "Same preset applied to every area. Use 'moving' for origination, 'business' for site selection, 'investing' for yield, 'research' for neutral baseline.",
+          "The preset applied to every place: 'moving' for residential mortgage origination, 'business' for site selection, 'investing' for yield and growth, 'research' for a neutral baseline.",
       },
     },
     required: ["areas", "preset"],
     additionalProperties: false,
   },
+  annotations: { readOnlyHint: true },
 } as const;
 
 export interface ComparePostcodesArgs {

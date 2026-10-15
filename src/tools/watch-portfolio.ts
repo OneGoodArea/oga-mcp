@@ -20,28 +20,30 @@ const MAX_AREAS_PER_CALL = 100;
 
 export const watchPortfolioToolDef = {
   name: watchPortfolioToolName,
+  title: "Watch a portfolio of places",
   description:
-    "Set up a Monitor portfolio in one step: creates a named portfolio and adds tracked UK areas. " +
-    "Use this when the LLM is helping a user watch a list of postcodes or place names over time. " +
-    "After this succeeds, use get_portfolio_changes(portfolio_id) to check for material signal moves between periods.",
+    "Creates a named Monitor portfolio and adds the places to track, in one call. Returns the portfolio id and the tracked places. " +
+    "Every call creates a new portfolio, so call it once per portfolio and keep the id; get_portfolio_changes reads material changes for it afterwards. " +
+    "Places are postcodes, place names or neighbourhood codes in England, Wales or Scotland.",
   inputSchema: {
     type: "object",
     properties: {
       name: {
         type: "string",
-        description: "Display name for the portfolio. 1-200 characters.",
+        description: "Display name for the portfolio. 1 to 200 characters.",
       },
       areas: {
         type: "array",
         items: { type: "string" },
         minItems: 1,
         maxItems: MAX_AREAS_PER_CALL,
-        description: `UK postcodes or place names to track. 1-${MAX_AREAS_PER_CALL} entries.`,
+        description: `Postcodes, place names or neighbourhood codes in England, Wales or Scotland to track. 1 to ${MAX_AREAS_PER_CALL} entries.`,
       },
     },
     required: ["name", "areas"],
     additionalProperties: false,
   },
+  annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false },
 } as const;
 
 export interface WatchPortfolioArgs {

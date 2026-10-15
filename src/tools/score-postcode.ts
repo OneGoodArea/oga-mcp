@@ -15,24 +15,23 @@ export const scorePostcodeToolName = "score_postcode";
 
 export const scorePostcodeToolDef = {
   name: scorePostcodeToolName,
+  title: "Score a place for a decision",
   description:
-    "Score a UK postcode (or place name) for a given decision preset using the OneGoodArea engine. " +
-    "Returns the overall 0-100 score, seven weighted dimensions with confidence + engine-grounded reasoning, " +
-    "a server-composed one-paragraph summary, actionable recommendations from low-scoring or low-confidence dimensions, " +
-    "and the list of public datasets that contributed. Every value is deterministic; the engine version is stamped on every response.",
+    "Scores one place in England, Wales or Scotland for a decision preset: an overall 0 to 100 score, seven weighted dimensions each with confidence and the engine's reasoning, a one-paragraph summary, recommendations drawn from low-scoring or low-confidence dimensions, and the public datasets used. " +
+    "Deterministic, with the methodology version stamped on the response. For the underlying numbers rather than a composite, get_area_signals; for several places at once, compare_postcodes.",
   inputSchema: {
     type: "object",
     properties: {
       area: {
         type: "string",
         description:
-          "UK postcode (e.g. 'SW1A 1AA') or place name (e.g. 'Manchester city centre', 'Shoreditch'). Max 100 characters.",
+          "A postcode (e.g. 'SW1A 1AA'), a place name (e.g. 'Manchester city centre') or a neighbourhood code (e.g. 'E01003920') in England, Wales or Scotland. Up to 100 characters.",
       },
       preset: {
         type: "string",
         enum: ["moving", "business", "investing", "research"],
         description:
-          "Decision context. 'moving' = origination scoring (residential mortgage suitability, demand-side risk). " +
+          "The decision the score is for. 'moving' = residential mortgage origination (suitability, demand-side risk). " +
           "'business' = site selection (footfall, competition, commercial viability). " +
           "'investing' = investment scoring (yield, growth, regeneration). " +
           "'research' = reference scoring (neutral baseline across all seven dimensions).",
@@ -41,6 +40,7 @@ export const scorePostcodeToolDef = {
     required: ["area", "preset"],
     additionalProperties: false,
   },
+  annotations: { readOnlyHint: true },
 } as const;
 
 export interface ScorePostcodeArgs {
