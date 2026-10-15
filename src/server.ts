@@ -35,77 +35,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { DEFAULT_BASE, OogaApiClient } from "./api-client.js";
 import { trainingCaptureLine } from "./startup.js";
-import {
-  scorePostcodeToolDef,
-  scorePostcodeToolName,
-  parseScorePostcodeArgs,
-  executeScorePostcode,
-} from "./tools/score-postcode.js";
-import {
-  comparePostcodesToolDef,
-  comparePostcodesToolName,
-  parseComparePostcodesArgs,
-  executeComparePostcodes,
-} from "./tools/compare-postcodes.js";
-import {
-  methodologyForToolDef,
-  methodologyForToolName,
-  parseMethodologyForArgs,
-  executeMethodologyFor,
-} from "./tools/methodology-for.js";
-import {
-  engineVersionToolDef,
-  engineVersionToolName,
-  executeEngineVersion,
-} from "./tools/engine-version.js";
-import {
-  getAreaSignalsToolDef,
-  getAreaSignalsToolName,
-  parseGetAreaSignalsArgs,
-  executeGetAreaSignals,
-} from "./tools/get-area-signals.js";
-import {
-  getSignalsByCategoryToolDef,
-  getSignalsByCategoryToolName,
-  parseGetSignalsByCategoryArgs,
-  executeGetSignalsByCategory,
-} from "./tools/get-signals-by-category.js";
-import {
-  findAreasToolDef,
-  findAreasToolName,
-  parseFindAreasArgs,
-  executeFindAreas,
-} from "./tools/find-areas.js";
-import {
-  findPeersToolDef,
-  findPeersToolName,
-  parseFindPeersArgs,
-  executeFindPeers,
-} from "./tools/find-peers.js";
-import {
-  watchPortfolioToolDef,
-  watchPortfolioToolName,
-  parseWatchPortfolioArgs,
-  executeWatchPortfolio,
-} from "./tools/watch-portfolio.js";
-import {
-  getPortfolioChangesToolDef,
-  getPortfolioChangesToolName,
-  parseGetPortfolioChangesArgs,
-  executeGetPortfolioChanges,
-} from "./tools/get-portfolio-changes.js";
-import {
-  areaBriefToolDef,
-  areaBriefToolName,
-  parseAreaBriefArgs,
-  executeAreaBrief,
-} from "./tools/area-brief.js";
-import {
-  resolvePlaceToolDef,
-  resolvePlaceToolName,
-  parseResolvePlaceArgs,
-  executeResolvePlace,
-} from "./tools/resolve-place.js";
+import { TOOL_DEFINITIONS, callTool } from "./tools/index.js";
 
 const SERVER_VERSION: string = createRequire(import.meta.url)("../package.json").version;
 
@@ -157,7 +87,7 @@ async function main(): Promise<void> {
   const apiKey = readApiKey();
   const baseUrl = process.env.OOGA_API_BASE;
 
-  const client = new OogaApiClient({ apiKey, baseUrl });
+  const client = new OogaApiClient({ apiKey, baseUrl, version: SERVER_VERSION });
 
   // Fail fast if customer's plan doesn't include MCP access.
   await checkMcpAccess(client);
@@ -173,84 +103,13 @@ async function main(): Promise<void> {
   );
   server.oninitialized = () => client.setHostClient(server.getClientVersion());
 
-  // 12 tools: resolve_place, score_postcode, compare_postcodes,
-  // get_area_signals, get_signals_by_category, find_areas, find_peers,
-  // watch_portfolio, get_portfolio_changes, area_brief, engine_version
-  // (network); methodology_for (static lookup).
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
-    tools: [
-      resolvePlaceToolDef,
-      scorePostcodeToolDef,
-      comparePostcodesToolDef,
-      getAreaSignalsToolDef,
-      getSignalsByCategoryToolDef,
-      findAreasToolDef,
-      findPeersToolDef,
-      watchPortfolioToolDef,
-      getPortfolioChangesToolDef,
-      areaBriefToolDef,
-      methodologyForToolDef,
-      engineVersionToolDef,
-    ],
+    tools: [...TOOL_DEFINITIONS],
   }));
 
-  // Dispatch on tool name. Each tool owns its own arg parsing + execution.
-  server.setRequestHandler(CallToolRequestSchema, async (req) => {
-    const { name, arguments: args } = req.params;
-
-    if (name === resolvePlaceToolName) {
-      const parsed = parseResolvePlaceArgs(args);
-      return executeResolvePlace(client, parsed);
-    }
-    if (name === scorePostcodeToolName) {
-      const parsed = parseScorePostcodeArgs(args);
-      return executeScorePostcode(client, parsed);
-    }
-    if (name === comparePostcodesToolName) {
-      const parsed = parseComparePostcodesArgs(args);
-      return executeComparePostcodes(client, parsed);
-    }
-    if (name === getAreaSignalsToolName) {
-      const parsed = parseGetAreaSignalsArgs(args);
-      return executeGetAreaSignals(client, parsed);
-    }
-    if (name === getSignalsByCategoryToolName) {
-      const parsed = parseGetSignalsByCategoryArgs(args);
-      return executeGetSignalsByCategory(client, parsed);
-    }
-    if (name === findAreasToolName) {
-      const parsed = parseFindAreasArgs(args);
-      return executeFindAreas(client, parsed);
-    }
-    if (name === findPeersToolName) {
-      const parsed = parseFindPeersArgs(args);
-      return executeFindPeers(client, parsed);
-    }
-    if (name === watchPortfolioToolName) {
-      const parsed = parseWatchPortfolioArgs(args);
-      return executeWatchPortfolio(client, parsed);
-    }
-    if (name === getPortfolioChangesToolName) {
-      const parsed = parseGetPortfolioChangesArgs(args);
-      return executeGetPortfolioChanges(client, parsed);
-    }
-    if (name === areaBriefToolName) {
-      const parsed = parseAreaBriefArgs(args);
-      return executeAreaBrief(client, parsed);
-    }
-    if (name === methodologyForToolName) {
-      const parsed = parseMethodologyForArgs(args);
-      return executeMethodologyFor(parsed);
-    }
-    if (name === engineVersionToolName) {
-      return executeEngineVersion(client);
-    }
-
-    return {
-      content: [{ type: "text", text: `Unknown tool: ${name}` }],
-      isError: true,
-    };
-  });
+  server.setRequestHandler(CallToolRequestSchema, async (req) =>
+    callTool(client, req.params.name, req.params.arguments),
+  );
 
   const transport = new StdioServerTransport();
   await server.connect(transport);

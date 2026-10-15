@@ -20,11 +20,38 @@ Training-data capture is off by default. Nothing you ask through this server is 
 
 ## Install
 
-You don't install it directly. Configure your MCP client to spawn it via `npx`.
+Two ways to connect, same twelve tools, same key.
 
-The server is listed in the [official MCP Registry](https://registry.modelcontextprotocol.io) as `com.onegoodarea/oga-mcp`. Clients that install from the registry can add it by that name. Everything else uses one of the config blocks below.
+### Hosted endpoint, nothing to install
 
-### Claude Desktop
+The API serves the tools itself at `https://api.onegoodarea.com/mcp` (Streamable HTTP). Any client that can send a header reaches it with no local process. Your API key goes in the `Authorization` header.
+
+Claude Code:
+
+```sh
+claude mcp add --transport http onegoodarea https://api.onegoodarea.com/mcp --header "Authorization: Bearer oga_xxx"
+```
+
+Cursor, in `.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "onegoodarea": {
+      "url": "https://api.onegoodarea.com/mcp",
+      "headers": { "Authorization": "Bearer oga_xxx" }
+    }
+  }
+}
+```
+
+Any other client: point its remote MCP server setting at the URL above and add the header. Each tool call is metered exactly like a direct API call under your key. Sign-in without a key, for claude.ai and ChatGPT, is the next release.
+
+### Local package
+
+The server is also an npm package your client spawns with `npx`. It is listed in the [official MCP Registry](https://registry.modelcontextprotocol.io) as `com.onegoodarea/oga-mcp`; clients that install from the registry can add it by that name. Everything else uses one of the config blocks below.
+
+#### Claude Desktop
 
 Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
 
@@ -44,7 +71,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
 
 Restart Claude Desktop. The OneGoodArea tools appear when you start a conversation about a UK location.
 
-### Cursor
+#### Cursor
 
 Add to `.cursor/mcp.json` in your project (or global config):
 
@@ -60,7 +87,7 @@ Add to `.cursor/mcp.json` in your project (or global config):
 }
 ```
 
-### Claude Code (CLI)
+#### Claude Code (CLI)
 
 One command:
 
@@ -75,7 +102,7 @@ claude mcp add onegoodarea -e OOGA_API_KEY=oga_xxx -- npx -y @oga-mcp/server
 1. Sign up at https://www.onegoodarea.com/sign-up.
 2. Go to https://www.onegoodarea.com/dashboard.
 3. Create an API key; it starts with `oga_`.
-4. Paste it into the `OOGA_API_KEY` env var above.
+4. Paste it after `Bearer` in the hosted header, or into the `OOGA_API_KEY` env var for the local package.
 
 ---
 

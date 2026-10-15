@@ -8,10 +8,10 @@
  * server-side from real engine state, no client-side text synthesis.
  */
 
-import { createRequire } from "node:module";
-
 export const DEFAULT_BASE = "https://api.onegoodarea.com";
-const PACKAGE_VERSION: string = createRequire(import.meta.url)("../package.json").version;
+
+/** The subset of fetch the client needs, so a host can run it in-process. */
+export type FetchLike = (url: string, init: { method: string; headers: Record<string, string>; body?: string; signal: AbortSignal }) => Promise<Response>;
 
 export interface HostClient {
   name?: string;
@@ -287,6 +287,11 @@ export interface OogaApiClientOptions {
   baseUrl?: string;
   /** Defaults to 60 seconds, the engine takes 15-45s on cache miss. */
   timeoutMs?: number;
+  /** The server version named in the User-Agent; the stdio entry passes its
+      package version, a host passes its own. */
+  version?: string;
+  /** Replaces global fetch, so a host can answer calls in-process. */
+  fetch?: FetchLike;
 }
 
 /** /v1/me response shape (the bits MCP relies on). The API returns more
@@ -332,6 +337,8 @@ export class OogaApiClient {
   private readonly apiKey: string;
   private readonly baseUrl: string;
   private readonly timeoutMs: number;
+  private readonly version: string;
+  private readonly fetchImpl: FetchLike | undefined;
   private host: HostClient | undefined;
 
   setHostClient(host: HostClient | undefined): void {
@@ -339,7 +346,11 @@ export class OogaApiClient {
   }
 
   private userAgent(): string {
-    return buildUserAgent(PACKAGE_VERSION, this.host);
+    return buildUserAgent(this.version, this.host);
+  }
+
+  private doFetch(url: string, init: Parameters<FetchLike>[1]): Promise<Response> {
+    return (this.fetchImpl ?? fetch)(url, init);
   }
 
   constructor(opts: OogaApiClientOptions) {
@@ -347,6 +358,8 @@ export class OogaApiClient {
     this.apiKey = opts.apiKey;
     this.baseUrl = (opts.baseUrl ?? DEFAULT_BASE).replace(/\/$/, "");
     this.timeoutMs = opts.timeoutMs ?? 60_000;
+    this.version = opts.version ?? "unknown";
+    this.fetchImpl = opts.fetch;
   }
 
   /**
@@ -359,7 +372,7 @@ export class OogaApiClient {
     const timeout = setTimeout(() => controller.abort(), 10_000);
 
     try {
-      const res = await fetch(url, {
+      const res = await this.doFetch(url, {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${this.apiKey}`,
@@ -410,7 +423,7 @@ export class OogaApiClient {
     const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
 
     try {
-      const res = await fetch(url, {
+      const res = await this.doFetch(url, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${this.apiKey}`,
@@ -537,7 +550,7 @@ export class OogaApiClient {
     const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
 
     try {
-      const res = await fetch(url, {
+      const res = await this.doFetch(url, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${this.apiKey}`,
@@ -574,7 +587,7 @@ export class OogaApiClient {
     const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
 
     try {
-      const res = await fetch(url, {
+      const res = await this.doFetch(url, {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${this.apiKey}`,
