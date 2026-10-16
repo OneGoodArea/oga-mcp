@@ -9,6 +9,7 @@
   "homepage": "https://www.onegoodarea.com/docs/mcp",
   "repository": "https://github.com/OneGoodArea/oga-mcp",
   "license": "MIT",
+  "privacyPolicyUrl": "https://www.onegoodarea.com/privacy",
   "keywords": [
     "uk",
     "property",
