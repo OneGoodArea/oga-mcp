@@ -1,6 +1,6 @@
 ---
 name: area-research-for-lenders
-description: Use when a user asks about a UK neighbourhood or postcode for mortgage origination, affordability, borrower-side risk, value retention or a lending decision. Runs OneGoodArea's resolve_place, area_brief for a lender, score_postcode with the moving preset and the signal tools, then reports engine output with its confidence and dates.
+description: Use when a user asks about a neighbourhood or postcode in England, Wales or Scotland for mortgage origination, affordability, borrower-side risk, value retention or a lending decision. Runs OneGoodArea's resolve_place, area_brief for a lender, score_postcode with the moving preset and the signal tools, then reports engine output with its confidence and dates.
 ---
 
 # Area research for lenders

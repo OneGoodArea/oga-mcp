@@ -1,6 +1,6 @@
 ---
 name: portfolio-watch
-description: Use when a user wants to track a list of UK places over time and learn what changed. Runs OneGoodArea's watch_portfolio once to create the portfolio, then get_portfolio_changes to report material moves with their size, direction and cause, and explains thresholds, baselines and the sample-size gate.
+description: Use when a user wants to track a list of places in England, Wales or Scotland over time and learn what changed. Runs OneGoodArea's watch_portfolio once to create the portfolio, then get_portfolio_changes to report material moves with their size, direction and cause, and explains thresholds, baselines and the sample-size gate.
 ---
 
 # Portfolio watch
