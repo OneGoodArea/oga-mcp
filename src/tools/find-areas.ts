@@ -34,7 +34,7 @@ export const findAreasToolDef = {
     required: ["question"],
     additionalProperties: false,
   },
-  annotations: { readOnlyHint: true },
+  annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
 } as const;
 
 export interface FindAreasArgs {

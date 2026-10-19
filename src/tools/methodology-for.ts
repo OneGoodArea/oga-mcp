@@ -29,7 +29,7 @@ export const methodologyForToolDef = {
     required: ["dimension"],
     additionalProperties: false,
   },
-  annotations: { readOnlyHint: true },
+  annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
 } as const;
 
 export interface MethodologyForArgs {

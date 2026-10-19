@@ -42,7 +42,7 @@ export const comparePostcodesToolDef = {
     required: ["areas", "preset"],
     additionalProperties: false,
   },
-  annotations: { readOnlyHint: true },
+  annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
 } as const;
 
 export interface ComparePostcodesArgs {

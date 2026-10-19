@@ -22,7 +22,7 @@ interface ToolShape {
   title: string;
   description: string;
   inputSchema: { type: string; properties: Record<string, { description?: string }>; required?: readonly string[]; additionalProperties: boolean };
-  annotations: { readOnlyHint: boolean; destructiveHint?: boolean; idempotentHint?: boolean };
+  annotations: { readOnlyHint: boolean; destructiveHint: boolean; openWorldHint: boolean; idempotentHint?: boolean };
 }
 
 const TOOLS: readonly ToolShape[] = [
@@ -55,12 +55,13 @@ describe("tool definitions", () => {
     }
   });
 
-  it.each(TOOLS.map((t) => [t.name, t] as const))("%s carries a title and one hint", (_name, tool) => {
+  it.each(TOOLS.map((t) => [t.name, t] as const))("%s carries a title and the three hints the directories read (AR-1166)", (_name, tool) => {
     expect(typeof tool.title).toBe("string");
     expect(tool.title.length).toBeGreaterThan(3);
     expect(typeof tool.annotations.readOnlyHint).toBe("boolean");
+    expect(typeof tool.annotations.destructiveHint).toBe("boolean");
+    expect(tool.annotations.openWorldHint).toBe(false);
     if (!tool.annotations.readOnlyHint) {
-      expect(typeof tool.annotations.destructiveHint).toBe("boolean");
       expect(typeof tool.annotations.idempotentHint).toBe("boolean");
     }
   });

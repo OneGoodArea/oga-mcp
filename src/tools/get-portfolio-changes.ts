@@ -53,7 +53,7 @@ export const getPortfolioChangesToolDef = {
     required: ["portfolio_id"],
     additionalProperties: false,
   },
-  annotations: { readOnlyHint: true },
+  annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
 } as const;
 
 export interface GetPortfolioChangesArgs {

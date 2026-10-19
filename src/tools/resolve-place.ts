@@ -33,7 +33,7 @@ export const resolvePlaceToolDef = {
     required: ["query"],
     additionalProperties: false,
   },
-  annotations: { readOnlyHint: true },
+  annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
 } as const;
 
 export interface ResolvePlaceArgs {

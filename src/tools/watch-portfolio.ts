@@ -43,7 +43,7 @@ export const watchPortfolioToolDef = {
     required: ["name", "areas"],
     additionalProperties: false,
   },
-  annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false },
+  annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
 } as const;
 
 export interface WatchPortfolioArgs {

@@ -37,7 +37,7 @@ export const getAreaSignalsToolDef = {
     required: ["area"],
     additionalProperties: false,
   },
-  annotations: { readOnlyHint: true },
+  annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
 } as const;
 
 export interface GetAreaSignalsArgs {

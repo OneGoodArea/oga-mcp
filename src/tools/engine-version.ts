@@ -25,7 +25,7 @@ export const engineVersionToolDef = {
     properties: {},
     additionalProperties: false,
   },
-  annotations: { readOnlyHint: true },
+  annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
 } as const;
 
 export async function executeEngineVersion(client: OogaApiClient): Promise<{

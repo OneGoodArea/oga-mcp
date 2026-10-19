@@ -43,7 +43,7 @@ export const areaBriefToolDef = {
     required: ["area", "audience"],
     additionalProperties: false,
   },
-  annotations: { readOnlyHint: true },
+  annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
 } as const;
 
 export interface AreaBriefArgs {
