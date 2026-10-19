@@ -17,9 +17,9 @@
       "interface": {
         "displayName": "OneGoodArea",
         "shortDescription": "Neighbourhood facts and scores",
-        "longDescription": "OneGoodArea tells you what any neighbourhood in England, Wales or Scotland is like. Give it a postcode, a place name or an official area code and it returns the schools, crime, property prices, transport, amenities, flood risk and deprivation for that place, each with the public source it came from, the period it describes and a confidence level.\n\nAsk for a score and it rates the place out of 100 for your purpose: a family move, a business location, an investment or general research, with the seven dimensions behind the number explained. Compare several places in one table, find the places most like one you already know, read a brief written for a lender, an investor or a retailer, or watch a list of places and be told when the data about them moves and why.\n\nIt is built for people who work with property and places: analysts, lenders, agents, investors, retailers and the teams building property and location products. Sign in with a OneGoodArea account; a free sandbox covers 500 calls a month.\n\nLimits: coverage is England, Wales and Scotland, not Northern Ireland. Property figures are sale prices, not rents. Scores are deterministic and versioned, so the same question gives the same answer until the methodology changes, and the version is stamped on every response.",
+        "longDescription": "OneGoodArea tells you what any neighbourhood in England, Wales or Scotland is like. Give it a postcode, a place name or an official area code and it returns the schools, crime, property prices, transport, amenities, flood risk and deprivation for that place, each with the public source it came from, the period it describes and a confidence level.\n\nAsk for a score and it rates the place out of 100 for your purpose: a family move, a business location, an investment or general research, with the seven dimensions behind the number explained. Compare several places in one table, find the places most like one you already know, read a brief written for a lender, an investor or a retailer, or watch a list of places and be told when the data about them moves and why.\n\nIt is built for people who work with property and places: analysts, lenders, agents, investors, retailers and the teams building property and location products. Sign in with a OneGoodArea account.\n\nLimits: coverage is England, Wales and Scotland, not Northern Ireland. Property figures are sale prices, not rents. Scores are deterministic and versioned, so the same question gives the same answer until the methodology changes, and the version is stamped on every response.",
         "developerName": "OneGoodArea",
-        "category": "Developer Tools",
+        "category": "Productivity",
         "capabilities": [
           "Resolve a postcode, place name or area code to a permanent place",
           "Describe a neighbourhood with sourced, dated signals",
@@ -94,7 +94,7 @@
         "commerce_description": "This plugin does not sell products or process payments."
       },
       "publication": {
-        "release_notes": "First listing. OneGoodArea engine 1.12.6, MCP server hosted at api.onegoodarea.com/mcp. Twelve tools: resolve_place, score_postcode, compare_postcodes, get_area_signals, get_signals_by_category, find_areas, find_peers, watch_portfolio, get_portfolio_changes, area_brief, methodology_for, engine_version. Coverage England, Wales and Scotland. Sign in with a OneGoodArea account; free sandbox of 500 calls a month. Training capture off by default."
+        "release_notes": "First listing. OneGoodArea engine 1.12.6, MCP server hosted at api.onegoodarea.com/mcp. Twelve tools: resolve_place, score_postcode, compare_postcodes, get_area_signals, get_signals_by_category, find_areas, find_peers, watch_portfolio, get_portfolio_changes, area_brief, methodology_for, engine_version. Coverage England, Wales and Scotland. Sign in with a OneGoodArea account. Training capture off by default."
       }
     }
   }

@@ -158,7 +158,7 @@ Same shape as `get_area_signals`, narrowed to one category. Use when the LLM nee
 
 ### Intelligence
 
-#### `find_areas(question)`: Ask a question about places
+#### `find_areas(question)`: Find neighbourhoods matching a question
 
 Ask in natural language. The planner translates the question into a typed plan (one of seven ops: `rank_areas`, `get_area`, `score_area`, `compare_areas`, `find_peers`, `find_insights`, `find_forecast`); the database executes it. The response returns the emitted plan + results, so every answer carries the query that produced it and can be run again.
 

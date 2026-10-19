@@ -17,18 +17,19 @@ export const findAreasToolName = "find_areas";
 
 export const findAreasToolDef = {
   name: findAreasToolName,
-  title: "Ask a question about places",
+  title: "Find neighbourhoods matching a question",
   description:
-    "Answers a natural-language question about places in England, Wales or Scotland by translating it into one typed query plan and running it: rank neighbourhoods by signals with filters, read one area, score an area, compare 2 to 5 areas, find peers, find peer-relative anomalies, or project a signal forward. " +
-    "Returns the plan it ran with the results, so the answer is reproducible. Deprivation questions need a nation or a district, because deciles are relative within a nation. " +
-    "Each call uses one natural-language question from the key's monthly allowance.",
+    "Finds and ranks the neighbourhoods in England, Wales or Scotland that match a plain-English question about their signals: price, price change, crime, schools, amenities, transport, flood risk or deprivation, with filters and a sort order. " +
+    "Returns the ranked rows with the typed query it ran, so the answer can be checked and run again. Deprivation questions need a nation or a district, because deciles are relative within a nation. Takes 20 to 40 seconds while the question is planned. " +
+    "For one named place use get_area_signals or score_postcode; to compare named places use compare_postcodes; for places like a known one use find_peers. " +
+    "Each call uses one plain-English question from the key's monthly allowance.",
   inputSchema: {
     type: "object",
     properties: {
       question: {
         type: "string",
         description:
-          "A question about places in England, Wales or Scotland. Examples: 'areas under £250k median price and rising YoY in England', 'compare M1 1AE, SW4 0LG, EH1 1BB for site selection', 'neighbourhoods like E01034129 with a similar crime and amenity profile', 'forecast median price in M1 1AE over the next 12 months'. Max 500 characters.",
+          "A question that ranks or filters neighbourhoods in England, Wales or Scotland by their signals. Examples: 'neighbourhoods in Manchester with a median price under £250k and prices rising', 'the ten least deprived neighbourhoods in Wales', 'areas in Leeds with the most Outstanding schools within 1.5 km'. Max 500 characters.",
       },
     },
     required: ["question"],
