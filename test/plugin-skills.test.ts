@@ -42,3 +42,20 @@ describe("plugin skills", () => {
     expect(skill.text).not.toContain(EM_DASH);
   });
 });
+
+/* AR-1200: the plugin listing links its homepage to the product page, not
+   the docs. */
+const MANIFEST = JSON.parse(
+  readFileSync(
+    join(dirname(fileURLToPath(import.meta.url)), "..", "plugin", ".claude-plugin", "plugin.json"),
+    "utf8",
+  ),
+) as { homepage: string; author: { url: string }; privacyPolicyUrl: string };
+
+describe("plugin manifest", () => {
+  it("links the product page as its homepage", () => {
+    expect(MANIFEST.homepage).toBe("https://www.onegoodarea.com/mcp");
+    expect(MANIFEST.author.url).toBe("https://www.onegoodarea.com");
+    expect(MANIFEST.privacyPolicyUrl).toBe("https://www.onegoodarea.com/privacy");
+  });
+});
