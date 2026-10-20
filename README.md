@@ -218,6 +218,19 @@ OOGA_API_BASE=http://localhost:4000 OOGA_API_KEY=oga_dev npm run dev
 
 ---
 
+## Evaluation
+
+Fifty prompts a user might type are sent to Claude with the twelve tool definitions attached, and each answer is scored on which tool was called and with which arguments: compare named places, rank or find neighbourhoods, places like this one, history and changes, watch a portfolio, resolve a place, one place, and ten prompts that must not call a tool. The eval never calls the OneGoodArea API. The score for the current release is written to `eval/RESULTS.md` by the run below.
+
+```sh
+ANTHROPIC_API_KEY=... npm run eval                  # writes eval/RESULTS.md
+OGA_EVAL_MODEL=claude-sonnet-4-5 npm run eval       # another model
+```
+
+In CI it runs by hand or on an `mcp-v*` tag, never on pull requests, because every run spends tokens.
+
+---
+
 ## Source
 
 The source lives at https://github.com/OneGoodArea/oga-mcp, a read-only mirror of the `mcp/` folder in OneGoodArea's monorepo, updated on every change. Open issues there. Code changes are made upstream and arrive with the next sync.

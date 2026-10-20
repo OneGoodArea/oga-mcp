@@ -25,12 +25,15 @@
     "build": "tsc",
     "dev": "tsx src/server.ts",
     "test": "vitest run",
+    "eval": "tsx eval/run.ts",
+    "eval:typecheck": "tsc -p tsconfig.eval.json",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.95.2",
     "@types/node": "^25.7.0",
     "tsx": "^4.19.0",
     "typescript": "^6.0.3",
