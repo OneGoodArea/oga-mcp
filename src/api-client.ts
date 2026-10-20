@@ -340,6 +340,7 @@ export class OogaApiClient {
   private readonly version: string;
   private readonly fetchImpl: FetchLike | undefined;
   private host: HostClient | undefined;
+  private tool: string | undefined;
 
   setHostClient(host: HostClient | undefined): void {
     this.host = host;
@@ -347,6 +348,28 @@ export class OogaApiClient {
 
   private userAgent(): string {
     return buildUserAgent(this.version, this.host);
+  }
+
+  private identityHeaders(): Record<string, string> {
+    return this.tool
+      ? { "User-Agent": this.userAgent(), "X-OGA-Tool": this.tool }
+      : { "User-Agent": this.userAgent() };
+  }
+
+  /** AR-1170: a copy of this client whose requests name the tool they serve,
+      so the API can attribute each call to a tool. The shared client is left
+      untouched, so parallel tool calls never see each other's name. */
+  forTool(name: string): OogaApiClient {
+    const scoped = new OogaApiClient({
+      apiKey: this.apiKey,
+      baseUrl: this.baseUrl,
+      timeoutMs: this.timeoutMs,
+      version: this.version,
+      fetch: this.fetchImpl,
+    });
+    scoped.host = this.host;
+    scoped.tool = name;
+    return scoped;
   }
 
   private doFetch(url: string, init: Parameters<FetchLike>[1]): Promise<Response> {
@@ -376,7 +399,7 @@ export class OogaApiClient {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${this.apiKey}`,
-          "User-Agent": this.userAgent(),
+          ...this.identityHeaders(),
         },
         signal: controller.signal,
       });
@@ -428,7 +451,7 @@ export class OogaApiClient {
         headers: {
           "Authorization": `Bearer ${this.apiKey}`,
           "Content-Type": "application/json",
-          "User-Agent": this.userAgent(),
+          ...this.identityHeaders(),
         },
         body: JSON.stringify({ area, preset }),
         signal: controller.signal,
@@ -555,7 +578,7 @@ export class OogaApiClient {
         headers: {
           "Authorization": `Bearer ${this.apiKey}`,
           "Content-Type": "application/json",
-          "User-Agent": this.userAgent(),
+          ...this.identityHeaders(),
         },
         body: JSON.stringify(body),
         signal: controller.signal,
@@ -591,7 +614,7 @@ export class OogaApiClient {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${this.apiKey}`,
-          "User-Agent": this.userAgent(),
+          ...this.identityHeaders(),
         },
         signal: controller.signal,
       });

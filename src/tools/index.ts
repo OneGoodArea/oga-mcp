@@ -83,19 +83,20 @@ export function isToolName(name: string): name is ToolName {
 /** Runs one tool call against the given client. Argument parsing throws on
     a bad shape, as before; the transport turns that into a protocol error. */
 export async function callTool(client: OogaApiClient, name: string, args: unknown): Promise<ToolResult> {
+  const scoped = isToolName(name) ? client.forTool(name) : client;
   switch (name) {
-    case resolvePlaceToolName: return executeResolvePlace(client, parseResolvePlaceArgs(args));
-    case scorePostcodeToolName: return executeScorePostcode(client, parseScorePostcodeArgs(args));
-    case comparePostcodesToolName: return executeComparePostcodes(client, parseComparePostcodesArgs(args));
-    case getAreaSignalsToolName: return executeGetAreaSignals(client, parseGetAreaSignalsArgs(args));
-    case getSignalsByCategoryToolName: return executeGetSignalsByCategory(client, parseGetSignalsByCategoryArgs(args));
-    case findAreasToolName: return executeFindAreas(client, parseFindAreasArgs(args));
-    case findPeersToolName: return executeFindPeers(client, parseFindPeersArgs(args));
-    case watchPortfolioToolName: return executeWatchPortfolio(client, parseWatchPortfolioArgs(args));
-    case getPortfolioChangesToolName: return executeGetPortfolioChanges(client, parseGetPortfolioChangesArgs(args));
-    case areaBriefToolName: return executeAreaBrief(client, parseAreaBriefArgs(args));
+    case resolvePlaceToolName: return executeResolvePlace(scoped, parseResolvePlaceArgs(args));
+    case scorePostcodeToolName: return executeScorePostcode(scoped, parseScorePostcodeArgs(args));
+    case comparePostcodesToolName: return executeComparePostcodes(scoped, parseComparePostcodesArgs(args));
+    case getAreaSignalsToolName: return executeGetAreaSignals(scoped, parseGetAreaSignalsArgs(args));
+    case getSignalsByCategoryToolName: return executeGetSignalsByCategory(scoped, parseGetSignalsByCategoryArgs(args));
+    case findAreasToolName: return executeFindAreas(scoped, parseFindAreasArgs(args));
+    case findPeersToolName: return executeFindPeers(scoped, parseFindPeersArgs(args));
+    case watchPortfolioToolName: return executeWatchPortfolio(scoped, parseWatchPortfolioArgs(args));
+    case getPortfolioChangesToolName: return executeGetPortfolioChanges(scoped, parseGetPortfolioChangesArgs(args));
+    case areaBriefToolName: return executeAreaBrief(scoped, parseAreaBriefArgs(args));
     case methodologyForToolName: return executeMethodologyFor(parseMethodologyForArgs(args));
-    case engineVersionToolName: return executeEngineVersion(client);
+    case engineVersionToolName: return executeEngineVersion(scoped);
     default:
       return { content: [{ type: "text", text: `Unknown tool: ${name}` }], isError: true };
   }
