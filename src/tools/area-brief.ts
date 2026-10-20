@@ -14,6 +14,7 @@
 
 import type { OogaApiClient } from "../api-client.js";
 import { OogaApiError } from "../api-client.js";
+import { notCoveredResult } from "./not-covered.js";
 import { AUDIENCES, getAudienceConfig, type Audience } from "./area-brief-audiences.js";
 import { formatAreaBriefAsText } from "./area-brief-format.js";
 
@@ -92,6 +93,8 @@ export async function executeAreaBrief(
       content: [{ type: "text", text: formatAreaBriefAsText(config, profile, score) }],
     };
   } catch (err) {
+    const notCovered = notCoveredResult(err);
+    if (notCovered) return notCovered;
     if (err instanceof OogaApiError) {
       const msg = `OneGoodArea API error (HTTP ${err.status ?? "?"}): ${err.message}`;
       return { content: [{ type: "text", text: msg }], isError: true };

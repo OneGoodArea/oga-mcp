@@ -12,6 +12,7 @@
 
 import type { OogaApiClient } from "../api-client.js";
 import { OogaApiError } from "../api-client.js";
+import { notCoveredResult } from "./not-covered.js";
 import { parseSortArg, SORT_PROPERTY, type SortOrder } from "../api-client.js";
 import { formatAreaProfileAsText } from "./signals-format.js";
 
@@ -71,6 +72,8 @@ export async function executeGetAreaSignals(
     const result = await client.getAreaSignals(args.area, args.sort);
     return { content: [{ type: "text", text: formatAreaProfileAsText(result) }] };
   } catch (err) {
+    const notCovered = notCoveredResult(err);
+    if (notCovered) return notCovered;
     if (err instanceof OogaApiError) {
       const msg = `OneGoodArea API error (HTTP ${err.status ?? "?"}): ${err.message}`;
       return { content: [{ type: "text", text: msg }], isError: true };

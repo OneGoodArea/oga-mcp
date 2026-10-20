@@ -207,6 +207,17 @@ describe("executeScorePostcode", () => {
     expect(out.content[0]!.text).toContain("Invalid or revoked API key");
   });
 
+  it("renders a nation refusal as an answer, never a score (AR-1219)", async () => {
+    const message = "BT1 1AA is in Northern Ireland which OneGoodArea does not cover. Coverage is England, Wales and Scotland.";
+    const client = makeClient(async () => {
+      throw new OogaApiError(message, 422, { error: message, code: "nation_not_covered", reason: "nation_not_covered", source: "area_resolution" });
+    });
+
+    const out = await executeScorePostcode(client, { area: "BT1 1AA", preset: "research" });
+    expect(out.isError).toBeFalsy();
+    expect(out.content[0]!.text).toBe(`Not found (nation_not_covered): ${message}`);
+  });
+
   it("returns isError + readable message on quota exceeded (HTTP 403)", async () => {
     const client = makeClient(async () => {
       throw new OogaApiError("Monthly API call limit reached", 403);

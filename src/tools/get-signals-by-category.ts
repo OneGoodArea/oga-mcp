@@ -11,6 +11,7 @@
 
 import type { OogaApiClient, SignalCategory } from "../api-client.js";
 import { OogaApiError, SIGNAL_CATEGORIES } from "../api-client.js";
+import { notCoveredResult } from "./not-covered.js";
 import { parseSortArg, SORT_PROPERTY, type SortOrder } from "../api-client.js";
 import { formatAreaProfileAsText } from "./signals-format.js";
 
@@ -81,6 +82,8 @@ export async function executeGetSignalsByCategory(
     const result = await client.getSignalsByCategory(args.area, args.category, args.sort);
     return { content: [{ type: "text", text: formatAreaProfileAsText(result, args.category) }] };
   } catch (err) {
+    const notCovered = notCoveredResult(err);
+    if (notCovered) return notCovered;
     if (err instanceof OogaApiError) {
       const msg = `OneGoodArea API error (HTTP ${err.status ?? "?"}): ${err.message}`;
       return { content: [{ type: "text", text: msg }], isError: true };

@@ -10,6 +10,7 @@
 
 import type { OogaApiClient, Preset, OogaScoreResponse } from "../api-client.js";
 import { OogaApiError } from "../api-client.js";
+import { notCoveredResult } from "./not-covered.js";
 
 export const scorePostcodeToolName = "score_postcode";
 
@@ -121,6 +122,8 @@ export async function executeScorePostcode(
       content: [{ type: "text", text: formatScoreResultAsText(result) }],
     };
   } catch (err) {
+    const notCovered = notCoveredResult(err);
+    if (notCovered) return notCovered;
     if (err instanceof OogaApiError) {
       const msg = `OneGoodArea API error (HTTP ${err.status ?? "?"}): ${err.message}`;
       return { content: [{ type: "text", text: msg }], isError: true };
