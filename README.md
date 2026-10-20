@@ -220,7 +220,7 @@ OOGA_API_BASE=http://localhost:4000 OOGA_API_KEY=oga_dev npm run dev
 
 ## Evaluation
 
-Fifty prompts a user might type are sent to Claude with the twelve tool definitions attached, and each answer is scored on which tool was called and with which arguments: compare named places, rank or find neighbourhoods, places like this one, history and changes, watch a portfolio, resolve a place, one place, and ten prompts that must not call a tool. The eval never calls the OneGoodArea API. The score for the current release is written to `eval/RESULTS.md` by the run below.
+Fifty prompts a user might type are sent to Claude with the twelve tool definitions attached, and each answer is scored on which tool was called and with which arguments: compare named places, rank or find neighbourhoods, places like this one, history and changes, watch a portfolio, resolve a place, one place, and ten prompts that must not call a tool. The eval never calls the OneGoodArea API. Score for 1.0.13, run on 20 October 2026 against `claude-haiku-4-5`: 49 of 50 passed (98%). The one miss was a question about Belfast, outside coverage, that called `find_areas`. Per-group results and failures are in [eval/RESULTS.md](eval/RESULTS.md); the run below rewrites it.
 
 ```sh
 ANTHROPIC_API_KEY=... npm run eval                  # writes eval/RESULTS.md
