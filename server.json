@@ -3,7 +3,7 @@
   "name": "com.onegoodarea/oga-mcp",
   "description": "Sourced facts, explained scores and change alerts for every GB neighbourhood, from one API.",
   "websiteUrl": "https://www.onegoodarea.com/docs/mcp",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "remotes": [
     {
       "type": "streamable-http",
@@ -23,7 +23,7 @@
     {
       "registryType": "npm",
       "identifier": "@oga-mcp/server",
-      "version": "1.0.13",
+      "version": "1.0.14",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"
