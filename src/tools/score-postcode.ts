@@ -32,7 +32,7 @@ export const scorePostcodeToolDef = {
         type: "string",
         enum: ["moving", "business", "investing", "research"],
         description:
-          "The decision the score is for. 'moving' = residential mortgage origination (suitability, demand-side risk). " +
+          "The decision the score is for. 'moving' = how liveable a place is for a household (safety, affordability and schools weigh most). Choose it for a home move; lenders use it for residential mortgage origination. " +
           "'business' = site selection (footfall, competition, commercial viability). " +
           "'investing' = investment scoring (yield, growth, regeneration). " +
           "'research' = reference scoring (neutral baseline across all seven dimensions).",

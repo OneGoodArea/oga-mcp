@@ -4,7 +4,7 @@ import { scorePostcodeToolDef } from "../src/tools/score-postcode.js";
 import { comparePostcodesToolDef } from "../src/tools/compare-postcodes.js";
 import { getAreaSignalsToolDef } from "../src/tools/get-area-signals.js";
 import { getSignalsByCategoryToolDef } from "../src/tools/get-signals-by-category.js";
-import { findAreasToolDef } from "../src/tools/find-areas.js";
+import { FIND_AREAS_PROVIDER_NOTE, findAreasToolDef } from "../src/tools/find-areas.js";
 import { findPeersToolDef } from "../src/tools/find-peers.js";
 import { watchPortfolioToolDef } from "../src/tools/watch-portfolio.js";
 import { getPortfolioChangesToolDef } from "../src/tools/get-portfolio-changes.js";
@@ -84,7 +84,7 @@ describe("tool definitions", () => {
     expect(tool.description.length).toBeGreaterThan(80);
     expect(tool.description.length).toBeLessThan(1000);
     expect(tool.description).not.toContain(EM_DASH);
-    expect(tool.description).not.toMatch(MODEL_WORDS);
+    expect(tool.description.replace(FIND_AREAS_PROVIDER_NOTE, "")).not.toMatch(MODEL_WORDS);
     expect(tool.description).not.toMatch(BARE_UK);
     expect(tool.description).not.toMatch(/\bLSOA/);
   });
@@ -95,6 +95,30 @@ describe("tool definitions", () => {
       expect(typeof prop.description, `${tool.name}.${key}`).toBe("string");
       expect(prop.description, `${tool.name}.${key}`).not.toMatch(BARE_UK);
       expect(prop.description, `${tool.name}.${key}`).not.toContain(EM_DASH);
+    }
+  });
+
+  it("describes the moving preset as household liveability, with lending as one use", () => {
+    for (const tool of [scorePostcodeToolDef, comparePostcodesToolDef]) {
+      const preset = tool.inputSchema.properties.preset.description;
+      expect(preset, tool.name).toContain("how liveable a place is for a household");
+      expect(preset, tool.name).toContain("safety, affordability and schools weigh most");
+      expect(preset, tool.name).toContain("residential mortgage origination");
+    }
+  });
+
+  it("find_areas names who processes the question, and no other tool names a provider", () => {
+    expect(findAreasToolDef.description).toContain(FIND_AREAS_PROVIDER_NOTE);
+    expect(FIND_AREAS_PROVIDER_NOTE).toContain("onegoodarea.com/privacy");
+    for (const tool of TOOLS.filter((t) => t.name !== findAreasToolDef.name)) {
+      expect(tool.description, tool.name).not.toMatch(MODEL_WORDS);
+    }
+  });
+
+  it("find_areas and compare_postcodes say there is no data outside Great Britain", () => {
+    for (const tool of [findAreasToolDef, comparePostcodesToolDef]) {
+      expect(tool.description, tool.name).toContain("no data for places outside England, Wales and Scotland");
+      expect(tool.description, tool.name).toContain("Belfast");
     }
   });
 

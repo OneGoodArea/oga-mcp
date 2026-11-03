@@ -21,7 +21,8 @@ export const comparePostcodesToolDef = {
   title: "Compare places side by side",
   description:
     "Scores 2 to 8 places in England, Wales or Scotland for the same decision preset and returns one table sorted by score: overall score, area type, strongest dimension and a one-line summary per place. " +
-    "Each place is scored independently, so a place that fails is reported in its row while the others still return.",
+    "Each place is scored independently, so a place that fails is reported in its row while the others still return. " +
+    "There is no data for places outside England, Wales and Scotland, such as Belfast; do not call it for them.",
   inputSchema: {
     type: "object",
     properties: {
@@ -36,7 +37,7 @@ export const comparePostcodesToolDef = {
         type: "string",
         enum: ["moving", "business", "investing", "research"],
         description:
-          "The preset applied to every place: 'moving' for residential mortgage origination, 'business' for site selection, 'investing' for yield and growth, 'research' for a neutral baseline.",
+          "The preset applied to every place: 'moving' for how liveable a place is for a household (safety, affordability and schools weigh most; choose it for a home move, lenders use it for residential mortgage origination), 'business' for site selection, 'investing' for yield and growth, 'research' for a neutral baseline.",
       },
     },
     required: ["areas", "preset"],

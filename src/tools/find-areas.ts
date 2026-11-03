@@ -15,6 +15,11 @@ import { formatQueryResponseAsText } from "./intelligence-format.js";
 
 export const findAreasToolName = "find_areas";
 
+/* The directory review asked this tool to name who processes the question
+   (AR-1287). Keep it in step with the privacy page's language models section. */
+export const FIND_AREAS_PROVIDER_NOTE =
+  "The question goes to a third-party language model (Anthropic, or another provider at onegoodarea.com/privacy) to plan the query; it never sees account details or result rows.";
+
 export const findAreasToolDef = {
   name: findAreasToolName,
   title: "Find neighbourhoods matching a question",
@@ -22,7 +27,9 @@ export const findAreasToolDef = {
     "Finds and ranks the neighbourhoods in England, Wales or Scotland that match a plain-English question about their signals: price, price change, crime, schools, amenities, transport, flood risk or deprivation, with filters and a sort order. " +
     "Returns the ranked rows with the typed query it ran, so the answer can be checked and run again. Deprivation questions need a nation or a district, because deciles are relative within a nation. Takes 20 to 40 seconds while the question is planned. " +
     "For one named place use get_area_signals or score_postcode; to compare named places use compare_postcodes; for places like a known one use find_peers. " +
-    "Each call uses one plain-English question from the key's monthly allowance.",
+    "Each call uses one plain-English question from the key's monthly allowance. " +
+    `${FIND_AREAS_PROVIDER_NOTE} ` +
+    "There is no data for places outside England, Wales and Scotland, such as Belfast; do not call it for them.",
   inputSchema: {
     type: "object",
     properties: {
