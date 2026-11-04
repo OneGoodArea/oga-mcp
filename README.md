@@ -61,7 +61,7 @@ Cursor, in `.cursor/mcp.json`:
 }
 ```
 
-Any other client: point its remote MCP server setting at the URL above and add the header. Each tool call is metered exactly like a direct API call under your key. ChatGPT follows once the server is listed in the OpenAI apps directory.
+Any other client: point its remote MCP server setting at the URL above and add the header. Each tool call is metered exactly like a direct API call under your key.
 
 ### Local package
 
