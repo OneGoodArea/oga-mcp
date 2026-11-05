@@ -74,7 +74,9 @@ export function parseScorePostcodeArgs(raw: unknown): ScorePostcodeArgs {
 export function formatScoreResultAsText(result: OogaScoreResponse): string {
   const lines: string[] = [];
 
-  lines.push(`# ${result.area} · ${result.preset} · ${result.score}/100`);
+  lines.push(`# ${result.area} · ${result.preset} · ${result.score === null ? "no overall score" : `${result.score}/100`}`);
+  if (result.score === null && result.score_unavailable_reason) lines.push(result.score_unavailable_reason);
+  else if (result.missing_weight) lines.push(`${Math.round(result.missing_weight * 100)}% of the weight had no data and is left out of the overall.`);
   lines.push(`Engine version: ${result.engine_version}`);
   lines.push(`Area type: ${result.area_type ?? "unavailable (ranked among all GB neighbourhoods)"}`);
   lines.push("");

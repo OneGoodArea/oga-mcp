@@ -73,14 +73,14 @@ function formatScoreArea(results: unknown): string {
   const r = results as {
     area: string;
     preset: string;
-    score: number;
+    score: number | null;
     area_type: string | null;
     dimensions?: Array<{ label: string; score: number; weight: number; confidence: number }>;
     confidence: number;
     engine_version: string;
   };
   const lines: string[] = [];
-  lines.push(`**${r.area}** · preset ${r.preset} · **${r.score}/100** · ${r.area_type ?? "area type unavailable"} · confidence ${(r.confidence * 100).toFixed(0)}%`);
+  lines.push(`**${r.area}** · preset ${r.preset} · **${r.score === null ? "no overall score" : `${r.score}/100`}** · ${r.area_type ?? "area type unavailable"} · confidence ${(r.confidence * 100).toFixed(0)}%`);
   lines.push(`Engine version: ${r.engine_version}`);
   lines.push("");
   if (r.dimensions && r.dimensions.length > 0) {

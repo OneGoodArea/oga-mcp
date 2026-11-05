@@ -97,10 +97,9 @@ interface ComparisonRow {
 export function formatComparisonAsText(rows: ComparisonRow[], preset: Preset): string {
   // Sort: successful results by descending score, errors at the bottom
   const sorted = [...rows].sort((a, b) => {
-    if (a.score === null && b.score === null) return 0;
-    if (a.score === null) return 1;
-    if (b.score === null) return -1;
-    return b.score - a.score;
+    const tier = (r: ComparisonRow) => (r.result === null ? 2 : r.score === null ? 1 : 0);
+    if (tier(a) !== tier(b)) return tier(a) - tier(b);
+    return (b.score ?? 0) - (a.score ?? 0);
   });
 
   const lines: string[] = [];
@@ -112,7 +111,7 @@ export function formatComparisonAsText(rows: ComparisonRow[], preset: Preset): s
   lines.push("|---|---|---|---|---|");
   let rank = 1;
   for (const r of sorted) {
-    if (r.score === null) {
+    if (r.result === null) {
       lines.push(`| n/a | ${r.area} | ERROR | n/a | ${r.error ?? "Unknown"} |`);
       continue;
     }
@@ -121,21 +120,21 @@ export function formatComparisonAsText(rows: ComparisonRow[], preset: Preset): s
       : null;
     const topStr = top ? `${top.label} (${top.score}/100)` : "n/a";
     const areaType = r.result?.area_type ?? "n/a";
-    lines.push(`| ${rank} | ${r.area} | ${r.score}/100 | ${areaType} | ${topStr} |`);
-    rank++;
+    lines.push(`| ${r.score === null ? "n/a" : rank} | ${r.area} | ${r.score === null ? "no overall score" : `${r.score}/100`} | ${areaType} | ${topStr} |`);
+    if (r.score !== null) rank++;
   }
   lines.push("");
 
   // Per-area summary
   lines.push("## Summaries");
   for (const r of sorted) {
-    if (r.score === null) {
+    if (r.result === null) {
       lines.push(`- **${r.area}**: error: ${r.error ?? "unknown failure"}`);
       continue;
     }
     /* Summary is server-composed from explain=true. Falls back to a
        minimal score line only if explain mode somehow returned without it. */
-    const summary = r.result?.summary ?? `${r.score}/100`;
+    const summary = r.result?.summary ?? (r.score === null ? "no overall score" : `${r.score}/100`);
     lines.push(`- **${r.area}**: ${summary}`);
   }
 

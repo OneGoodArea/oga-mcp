@@ -116,7 +116,7 @@ export function formatAreaBriefAsText(
 
   /* Overall verdict block, score + server-composed summary. */
   lines.push(`## Overall verdict`);
-  lines.push(`**Score:** ${score.score}/100 · **Aggregate confidence:** ${(score.confidence * 100).toFixed(0)}%`);
+  lines.push(`**Score:** ${score.score === null ? "no overall score" : `${score.score}/100`} · **Aggregate confidence:** ${(score.confidence * 100).toFixed(0)}%`);
   if (score.summary) {
     lines.push("");
     lines.push(score.summary);

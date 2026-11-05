@@ -224,6 +224,8 @@ export interface OogaScoreDimension {
   label: string;
   score: number;
   weight: number;
+  /** False when no data stood behind the score; the dimension is then left out of the overall. */
+  has_data?: boolean;
   confidence: number;
   reasoning: string;
   confidence_reason: string;
@@ -235,7 +237,11 @@ export interface OogaScoreDimension {
 export interface OogaScoreResponse {
   area: string;
   preset: Preset;
-  score: number;
+  /** Null when too much of the weight has no data; see score_unavailable_reason. */
+  score: number | null;
+  /** The share of the weight, 0 to 1, that had no data and was left out of the overall. */
+  missing_weight?: number;
+  score_unavailable_reason?: string | null;
   /** Null when no official class is known; transport, schools and
       amenities were then ranked among all GB neighbourhoods. */
   area_type: "urban" | "suburban" | "rural" | null;
