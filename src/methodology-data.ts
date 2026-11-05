@@ -71,7 +71,7 @@ export const METHODOLOGY: DimensionMethodology[] = [
     intents: ["moving", "business", "investing", "research"],
     source: "Environment Agency (England), SEPA (Scotland), Natural Resources Wales; OpenStreetMap green space",
     summary:
-      "Counts the flood risk areas or flood maps near the neighbourhood's centre (the Environment Agency's own 3km rule in England; SEPA and Natural Resources Wales maps within 250m) and ranks that exposure among the nation's neighbourhoods, the least exposed scoring highest. Parks and green space add a little; an active flood warning, when warnings were checked for the response, takes points off. The reasoning names the agency and what it measures. Without flood data the score rests on green space at reduced confidence.",
+      "Counts the flood zones or flood maps near the neighbourhood's centre (England: the Environment Agency's Flood Zones 2 and 3; Scotland and Wales: SEPA and Natural Resources Wales maps; each within 250m; a zero means none is mapped, not that the place cannot flood) and ranks that exposure among the nation's neighbourhoods, the least exposed scoring highest. Parks and green space add a little; an active flood warning, when warnings were checked for the response, takes points off. The reasoning names the agency and what it measures. Without flood data the score rests on green space at reduced confidence.",
     weights: { moving: 5, business: 15, investing: 15, research: 14 },
   },
 ];
