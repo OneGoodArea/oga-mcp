@@ -30,7 +30,7 @@ export function buildUserAgent(version: string, host?: HostClient): string {
 
 export type Preset = "moving" | "business" | "investing" | "research";
 
-/** AR-366: the seven signal categories exposed by /v1/signals/:category.
+/** AR-366: the signal categories exposed by /v1/signals/:category.
     Mirrors @onegoodarea/contracts SIGNAL_CATEGORIES. */
 export const SIGNAL_CATEGORIES = [
   "crime",
@@ -40,6 +40,7 @@ export const SIGNAL_CATEGORIES = [
   "amenities",
   "transport",
   "environment",
+  "socioeconomic",
 ] as const;
 export type SignalCategory = typeof SIGNAL_CATEGORIES[number];
 
