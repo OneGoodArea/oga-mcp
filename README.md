@@ -150,7 +150,7 @@ Score 2-8 areas side-by-side for the same preset. Returns a sorted comparison ta
 
 #### `get_area_signals(area)`: All signals for a place
 
-Full signals catalog across all eight categories (crime, deprivation, property, schools, amenities, transport, environment, socioeconomic). Each signal carries value + unit, percentile when store-backed, confidence with engine-grounded reason, source attribution, and observation period.
+Full signals catalog across all nine categories (crime, deprivation, property, schools, amenities, transport, environment, socioeconomic, connectivity). Each signal carries value + unit, percentile when store-backed, confidence with engine-grounded reason, source attribution, and observation period.
 
 #### `get_signals_by_category(area, category)`: Signals in one category
 

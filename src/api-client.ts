@@ -41,6 +41,7 @@ export const SIGNAL_CATEGORIES = [
   "transport",
   "environment",
   "socioeconomic",
+  "connectivity",
 ] as const;
 export type SignalCategory = typeof SIGNAL_CATEGORIES[number];
 
